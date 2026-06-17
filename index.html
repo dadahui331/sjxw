@@ -1,1 +1,2068 @@
-<h1>Hello World</h1>
+﻿
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>狂欢散场，凝聚启航：我们在节庆里如何走向彼此</title>
+
+<!-- ========== 字体 ========== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+<!-- ========== GSAP + ScrollTrigger ========== -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollToPlugin.min.js"></script>
+
+<!-- ========== ECharts ========== -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+
+<style>
+/* ================================================================
+   CSS 变量 & 基础重置
+   ================================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --font-title: 'Noto Serif SC', 'SimSun', 'STSong', serif;
+  --font-body: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  --ink: #3d2b1f;
+  --ink-light: #5c3d2e;
+  --ink-muted: #8b7355;
+  --paper: #f5f0e8;
+  --vermillion: #8B0000;
+  --vermillion-light: #a52a2a;
+  --gold: #b8860b;
+  --gold-light: #d4a017;
+  --sky-top: #c9dce8;
+  --earth-start: #d4c0a0;
+  --earth-end: #a6845c;
+
+  --transition-atm: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  --glass-bg: rgba(255, 248, 240, 0.65);
+  --glass-border: rgba(139, 0, 0, 0.1);
+  --glass-shadow: 0 4px 32px rgba(61, 43, 31, 0.06);
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ================================================================
+   【第一层】永恒背景图片 — fixed, z-index: 1
+   ================================================================ */
+#eternal-bg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+#eternal-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ================================================================
+   【第二层】氛围道具层 — fixed, z-index: 2
+   ================================================================ */
+.atm-layer {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: 2;
+  pointer-events: none;
+  transition: var(--transition-atm);
+}
+
+/* ---------- 泼水节 #env-water ---------- */
+#env-water { opacity: 1; }
+
+.water-ripple {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid rgba(60, 160, 210, 0.28);
+  animation: ripple 5.5s ease-out infinite;
+  opacity: 0;
+}
+.water-ripple:nth-child(1)  { width:140px; height:140px; top:52%; left:12%; animation-delay:0s; }
+.water-ripple:nth-child(2)  { width:180px; height:180px; top:32%; left:50%; animation-delay:1.4s; }
+.water-ripple:nth-child(3)  { width:120px; height:120px; top:58%; left:68%; animation-delay:2.8s; }
+.water-ripple:nth-child(4)  { width:200px; height:200px; top:22%; left:32%; animation-delay:4.2s; }
+
+@keyframes ripple {
+  0%   { transform:scale(0.25); opacity:0.5; border-width:2.5px; }
+  100% { transform:scale(4.5); opacity:0; border-width:0.1px; }
+}
+
+.water-drop {
+  position: absolute;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: rgba(70, 170, 215, 0.55);
+  box-shadow: 0 0 10px rgba(70, 170, 215, 0.45);
+  animation: dropFloat 3.8s ease-in-out infinite;
+}
+.water-drop:nth-child(5)  { top:48%; left:16%; animation-delay:0s; }
+.water-drop:nth-child(6)  { top:40%; left:26%; animation-delay:0.5s; }
+.water-drop:nth-child(7)  { top:55%; left:62%; animation-delay:1s; }
+.water-drop:nth-child(8)  { top:36%; left:70%; animation-delay:1.5s; }
+.water-drop:nth-child(9)  { top:46%; left:48%; animation-delay:2s; }
+.water-drop:nth-child(10) { top:52%; left:80%; animation-delay:2.5s; }
+.water-drop:nth-child(11) { top:30%; left:42%; animation-delay:3s; }
+.water-drop:nth-child(12) { top:58%; left:35%; animation-delay:3.5s; }
+
+@keyframes dropFloat {
+  0%,100% { transform:translateY(0) scale(1); opacity:0.55; }
+  50%     { transform:translateY(-22px) scale(2); opacity:0.95; }
+}
+
+.water-lotus {
+  position: absolute;
+  font-size: 2.6rem;
+  opacity: 0.45;
+  animation: lotusSway 5s ease-in-out infinite;
+  filter: drop-shadow(0 4px 8px rgba(170,140,160,0.28));
+}
+.water-lotus:nth-child(13) { top:64%; left:10%; }
+.water-lotus:nth-child(14) { top:68%; left:76%; animation-delay:1.5s; }
+.water-lotus:nth-child(15) { top:60%; left:46%; animation-delay:3s; font-size:1.8rem; }
+
+@keyframes lotusSway {
+  0%,100% { transform:rotate(-3deg) translateY(0); }
+  50%     { transform:rotate(3deg) translateY(-6px); }
+}
+
+.water-shimmer {
+  position: absolute;
+  height: 2.5px;
+  background: linear-gradient(90deg, transparent, rgba(170,215,235,0.45), transparent);
+  border-radius: 2px;
+  animation: shimmerDrift 6s ease-in-out infinite;
+}
+.water-shimmer:nth-child(16) { top:43%; left:8%; width:180px; }
+.water-shimmer:nth-child(17) { top:50%; left:38%; width:240px; animation-delay:2s; }
+.water-shimmer:nth-child(18) { top:46%; left:58%; width:160px; animation-delay:4s; }
+
+@keyframes shimmerDrift {
+  0%,100% { opacity:0.18; transform:translateX(0) scaleY(1); }
+  50%     { opacity:0.55; transform:translateX(35px) scaleY(2.2); }
+}
+
+/* ---------- 磁力粒子画布 ---------- */
+#particle-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: 2;
+}
+
+/* ---------- 泼水节地面素材 ---------- */
+.water-prop {
+  position: absolute;
+  object-fit: contain;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+  bottom: 6vh;
+}
+#prop-elephants { left: 4vw; bottom: 2vh; width: 500px; height: auto; transform: rotate(-4deg); }
+#prop-jar { left: 80vw; bottom: 4vh; width: 180px; height: auto; }
+#prop-building { left: 62vw; bottom: 10vh; width: 370px; height: auto; }
+#prop-people3 { left: 30vw; bottom: 4vh; width: 540px; height: auto; }
+
+@keyframes shake1 {
+  0%   { transform: translate(0,0) rotate(-3deg); }
+  50%  { transform: translate(-3px,2px) rotate(-2deg); }
+  100% { transform: translate(0,0) rotate(-3deg); }
+}
+@keyframes shake2 {
+  0%   { transform: translate(1px,0) rotate(0deg); }
+  33%  { transform: translate(4px,-3px) rotate(1.5deg); }
+  66%  { transform: translate(-2px,2px) rotate(-1deg); }
+  100% { transform: translate(1px,0) rotate(0deg); }
+}
+@keyframes shake3 {
+  0%   { transform: translate(0,-1px) rotate(-1deg); }
+  25%  { transform: translate(-2px,4px) rotate(-2deg); }
+  50%  { transform: translate(3px,-2px) rotate(1deg); }
+  75%  { transform: translate(-4px,1px) rotate(0deg); }
+  100% { transform: translate(0,-1px) rotate(-1deg); }
+}
+@keyframes shake4 {
+  0%   { transform: translate(2px,0) rotate(1deg); }
+  30%  { transform: translate(-3px,3px) rotate(2deg); }
+  60%  { transform: translate(4px,-2px) rotate(-1deg); }
+  100% { transform: translate(2px,0) rotate(1deg); }
+}
+.shaking-1 { animation: shake1 3.5s ease-in-out infinite; }
+.shaking-2 { animation: shake2 2.8s ease-in-out infinite; }
+.shaking-3 { animation: shake3 4.0s ease-in-out infinite; }
+.shaking-4 { animation: shake4 3.2s ease-in-out infinite; }
+.shaking-out { animation: shake1 0.5s ease-in-out infinite !important; }
+
+/* ---------- 那达慕地面素材 ---------- */
+.nadam-prop {
+  position: absolute;
+  object-fit: contain;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+  bottom: 6vh;
+}
+#prop-xinjiang { left: 7vw; bottom: 6vh; width: 560px; height: auto; }
+#prop-zhuangzu { left: 32vw; bottom: 12vh; width: 520px; height: auto; }
+#prop-wrestle { left: 62vw; bottom: 8vh; width: 320px; height: auto; }
+
+/* ---------- 那达慕 #env-grass ---------- */
+#env-grass { opacity: 0; }
+
+.grass-blade {
+  position: absolute;
+  bottom: 18vh;
+  width: 3px;
+  border-radius: 60% 60% 0 0;
+  transform-origin: bottom center;
+  background: linear-gradient(to top, rgba(105,158,72,0.65), rgba(145,192,95,0.35));
+  animation: grassSway 2.8s ease-in-out infinite;
+}
+.grass-blade:nth-child(1)  { left:6%;  height:85px;  animation-delay:0s; }
+.grass-blade:nth-child(2)  { left:10%; height:105px; animation-delay:0.25s; }
+.grass-blade:nth-child(3)  { left:14%; height:72px;  animation-delay:0.5s; }
+.grass-blade:nth-child(4)  { left:18%; height:95px;  animation-delay:0.75s; }
+.grass-blade:nth-child(5)  { left:22%; height:80px;  animation-delay:1s; }
+.grass-blade:nth-child(6)  { left:26%; height:110px; animation-delay:1.25s; }
+.grass-blade:nth-child(7)  { left:62%; height:90px;  animation-delay:1.5s; }
+.grass-blade:nth-child(8)  { left:66%; height:100px; animation-delay:1.75s; }
+.grass-blade:nth-child(9)  { left:70%; height:75px;  animation-delay:2s; }
+.grass-blade:nth-child(10) { left:74%; height:108px; animation-delay:2.25s; }
+.grass-blade:nth-child(11) { left:78%; height:85px;  animation-delay:2.5s; }
+.grass-blade:nth-child(12) { left:82%; height:95px;  animation-delay:2.75s; }
+.grass-blade:nth-child(13) { left:40%; height:120px; animation-delay:0.6s; }
+.grass-blade:nth-child(14) { left:44%; height:88px;  animation-delay:0.9s; }
+.grass-blade:nth-child(15) { left:48%; height:102px; animation-delay:1.2s; }
+.grass-blade:nth-child(16) { left:52%; height:78px;  animation-delay:1.5s; }
+.grass-blade:nth-child(17) { left:56%; height:98px;  animation-delay:1.8s; }
+
+@keyframes grassSway {
+  0%,100% { transform:rotate(-4deg); }
+  50%     { transform:rotate(4deg); }
+}
+
+.grass-horse {
+  position: absolute;
+  font-size: 3.2rem;
+  opacity: 0.42;
+  animation: horseTrot 9s ease-in-out infinite;
+  filter: drop-shadow(0 6px 10px rgba(70,45,15,0.28));
+}
+.grass-horse:nth-child(18) { top:44%; left:16%; animation-delay:0s; }
+.grass-horse:nth-child(19) { top:48%; left:55%; animation-delay:2s; font-size:4rem; }
+.grass-horse:nth-child(20) { top:40%; left:36%; animation-delay:4s; font-size:2.8rem; }
+
+@keyframes horseTrot {
+  0%,100% { transform:translateX(0) translateY(0) rotate(-1deg); }
+  25%     { transform:translateX(18px) translateY(-10px) rotate(2deg); }
+  50%     { transform:translateX(36px) translateY(0) rotate(-2deg); }
+  75%     { transform:translateX(18px) translateY(-6px) rotate(1deg); }
+}
+
+.grass-yurt {
+  position: absolute;
+  font-size: 2.8rem;
+  opacity: 0.45;
+  animation: yurtBreathe 4.5s ease-in-out infinite;
+}
+.grass-yurt:nth-child(21) { top:58%; left:28%; }
+.grass-yurt:nth-child(22) { top:61%; left:70%; animation-delay:1.8s; font-size:2.2rem; }
+
+@keyframes yurtBreathe {
+  0%,100% { transform:scale(1); opacity:0.45; }
+  50%     { transform:scale(1.05); opacity:0.58; }
+}
+
+.grass-eagle {
+  position: absolute;
+  font-size: 1.6rem;
+  opacity: 0.35;
+  animation: eagleSoar 11s ease-in-out infinite;
+}
+.grass-eagle:nth-child(23) { top:15%; left:22%; }
+.grass-eagle:nth-child(24) { top:20%; left:62%; animation-delay:3.5s; }
+
+@keyframes eagleSoar {
+  0%,100% { transform:translate(0,0) rotate(-4deg); }
+  25%     { transform:translate(50px,-25px) rotate(3deg); }
+  50%     { transform:translate(95px,-8px) rotate(-5deg); }
+  75%     { transform:translate(50px,-18px) rotate(2deg); }
+}
+
+.nadam-spark {
+  position: absolute;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: rgba(210,165,60,0.7);
+  box-shadow: 0 0 8px rgba(220,180,60,0.55);
+  animation: sparkFloat 5s ease-in-out infinite;
+}
+.nadam-spark:nth-child(25) { top:38%; left:18%; }
+.nadam-spark:nth-child(26) { top:32%; left:48%; animation-delay:1.2s; }
+.nadam-spark:nth-child(27) { top:42%; left:72%; animation-delay:2.4s; }
+.nadam-spark:nth-child(28) { top:28%; left:34%; animation-delay:3.6s; }
+.nadam-spark:nth-child(29) { top:48%; left:58%; animation-delay:4.8s; }
+
+@keyframes sparkFloat {
+  0%,100% { transform:translateY(0) scale(1); opacity:0.7; }
+  50%     { transform:translateY(-22px) scale(2.2); opacity:0.18; }
+}
+
+/* ---------- 全国地图 #env-map ---------- */
+#env-map { opacity: 0; }
+
+.map-dot {
+  position: absolute;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(195,130,40,0.9) 0%, rgba(195,130,40,0) 70%);
+  box-shadow: 0 0 18px rgba(195,130,40,0.45);
+  animation: mapPulse 3s ease-in-out infinite;
+}
+.map-dot:nth-child(1)  { top:66%; left:47%; }
+.map-dot:nth-child(2)  { top:46%; left:47%; }
+.map-dot:nth-child(3)  { top:60%; left:45%; }
+.map-dot:nth-child(4)  { top:53%; left:28%; }
+.map-dot:nth-child(5)  { top:40%; left:16%; }
+.map-dot:nth-child(6)  { top:58%; left:51%; }
+.map-dot:nth-child(7)  { top:68%; left:49%; }
+.map-dot:nth-child(8)  { top:48%; left:56%; }
+.map-dot:nth-child(9)  { top:62%; left:53%; }
+
+@keyframes mapPulse {
+  0%,100% { transform:scale(1); opacity:0.65; }
+  50%     { transform:scale(1.7); opacity:1; }
+}
+
+.map-line {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(180,140,60,0.22), transparent);
+  transform-origin: left center;
+  animation: lineShimmer 6s ease-in-out infinite;
+}
+.map-line:nth-child(10) { top:60%; left:40%; width:180px; transform:rotate(-6deg); }
+.map-line:nth-child(11) { top:56%; left:30%; width:220px; transform:rotate(7deg); animation-delay:2s; }
+.map-line:nth-child(12) { top:63%; left:44%; width:150px; transform:rotate(-4deg); animation-delay:4s; }
+
+@keyframes lineShimmer {
+  0%,100% { opacity:0.15; }
+  50%     { opacity:0.5; }
+}
+
+.map-blob {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(175,145,95,0.14) 0%, transparent 70%);
+  animation: blobBreathe 8s ease-in-out infinite;
+}
+.map-blob:nth-child(13) { top:52%; left:38%; width:280px; height:240px; }
+.map-blob:nth-child(14) { top:32%; left:20%; width:240px; height:190px; animation-delay:3s; }
+.map-blob:nth-child(15) { top:56%; left:53%; width:210px; height:170px; animation-delay:5s; }
+
+@keyframes blobBreathe {
+  0%,100% { transform:scale(1); opacity:0.14; }
+  50%     { transform:scale(1.12); opacity:0.26; }
+}
+
+/* ================================================================
+   【第三层】滚动内容层 — z-index: 6
+   ================================================================ */
+#scroll-container {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  overflow: hidden;
+  z-index: 6;
+}
+
+#sections-wrapper {
+  display: flex;
+  height: 100%;
+  will-change: transform;
+}
+
+.scene {
+  flex: 0 0 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#scroll-trigger { position: relative; width: 100%; }
+
+/* ================================================================
+   【小人】穿梭时空的主角
+   ================================================================ */
+#traveler {
+  position: fixed;
+  bottom: 18vh; left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.traveler-shadow {
+  width: 55px; height: 12px;
+  border-radius: 50%;
+  background: rgba(80, 50, 20, 0.25);
+  animation: shadowPulse 0.55s ease-in-out infinite alternate;
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@keyframes shadowPulse {
+  0%   { transform: translateX(-50%) scaleX(0.85); opacity: 0.2; }
+  100% { transform: translateX(-50%) scaleX(1.1); opacity: 0.35; }
+}
+
+#traveler-video { display: block; height: 200px; width: auto; }
+
+.traveler-aura {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px; height: 190px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(255,230,180,0.2) 0%, transparent 70%);
+  animation: auraGlow 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes auraGlow {
+  0%,100% { opacity: 0.35; transform: translate(-50%, -50%) scale(1); }
+  50%     { opacity: 0.65; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+.traveler-particle {
+  position: absolute;
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: rgba(200,170,100,0.6);
+  animation: particleDrift 2s ease-in-out infinite;
+}
+.traveler-particle:nth-child(1) { animation-delay:0s; }
+.traveler-particle:nth-child(2) { animation-delay:0.3s; }
+.traveler-particle:nth-child(3) { animation-delay:0.6s; }
+.traveler-particle:nth-child(4) { animation-delay:0.9s; }
+.traveler-particle:nth-child(5) { animation-delay:1.2s; }
+.traveler-particle:nth-child(6) { animation-delay:1.5s; }
+.traveler-particle:nth-child(7) { animation-delay:1.8s; }
+
+@keyframes particleDrift {
+  0%   { transform:translate(0,0) scale(0); opacity:0; }
+  30%  { opacity:0.8; }
+  100% { transform:translate(var(--dx), var(--dy)) scale(1); opacity:0; }
+}
+
+/* ================================================================
+   场景内容卡片
+   ================================================================ */
+.scene-inner {
+  width: 100%; height: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 3vh 6vw;
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+}
+
+.scene-left {
+  overflow-y: auto; max-height: 85vh; padding-right: 8px;
+  flex: 0 0 42%;
+  padding-right: 2vw;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.scene-right {
+  overflow-y: auto; max-height: 85vh; padding-left: 8px;
+  flex: 0 0 42%;
+  margin-left: auto;
+  padding-left: 2vw;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+/* Hero 开场 */
+#scene-hero .scene-inner {
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  text-align: left;
+  padding-top: 0;
+  gap: 3vw;
+  position: relative;
+  z-index: 10;
+}
+
+#scene-map .scene-inner { flex-direction: column; justify-content: flex-start; padding: 0; }
+
+#scene-map .map-title {
+  text-align: left; margin-bottom: 8px; margin-top: 0;
+  color: #2d7a2d; font-size: clamp(2.2rem, 4vw, 3.2rem);
+  font-weight: 900; letter-spacing: 0.1em;
+  animation: titleGlow 1.8s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+  0%, 100% { text-shadow: 0 0 4px rgba(255,255,255,0.2), 0 0 10px rgba(255,255,255,0.1); }
+  50% { text-shadow: 0 0 8px rgba(255,255,255,1), 0 0 24px rgba(255,255,255,0.9), 0 0 48px rgba(255,255,255,0.5), 0 0 80px rgba(255,255,255,0.3); }
+}
+
+#scene-map .map-subtitle {
+  text-align: left; margin-bottom: 0;
+  color: #3d8b3d; font-size: clamp(0.9rem, 1.3vw, 1.1rem);
+  font-weight: 500; letter-spacing: 0.06em;
+  animation: subtitlePulse 1.8s ease-in-out infinite;
+}
+
+@keyframes subtitlePulse {
+  0%, 100% { text-shadow: 0 0 3px rgba(255,255,255,0.15); }
+  50% { text-shadow: 0 0 6px rgba(255,255,255,1), 0 0 16px rgba(255,255,255,0.7), 0 0 30px rgba(255,255,255,0.35); }
+}
+
+#scene-ending .scene-inner { flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+
+/* ================================================================
+   磨砂玻璃卡片
+   ================================================================ */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 1.8rem 2rem;
+  box-shadow: var(--glass-shadow);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.glass-card:hover { transform: translateY(-3px); box-shadow: 0 8px 36px rgba(61, 43, 31, 0.09); }
+.glass-card.chart-card { padding: 1rem; }
+
+/* ================================================================
+   标题 & 文字
+   ================================================================ */
+.section-title {
+  font-family: var(--font-title);
+  font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+  font-weight: 700; color: var(--vermillion);
+  letter-spacing: 0.06em; line-height: 1.3;
+}
+
+.section-subtitle {
+  font-family: var(--font-title);
+  font-size: clamp(1rem, 1.6vw, 1.4rem);
+  color: var(--ink-muted); letter-spacing: 0.04em; line-height: 1.6;
+}
+
+.section-body {
+  font-size: clamp(0.88rem, 1vw, 0.98rem);
+  line-height: 1.95; color: var(--ink-light);
+}
+
+/* ================================================================
+   Hero 视频+文字布局
+   ================================================================ */
+.hero-video-wrap {
+  flex: 0 0 auto; display: flex;
+  align-items: center; justify-content: center;
+  position: relative;
+}
+
+.hero-video-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 云彩舞台 */
+.cloud-base {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60vw; height: 55vw;
+  max-width: 860px; max-height: 800px;
+  border-radius: 48% 52% 44% 56%;
+  background: radial-gradient(ellipse at 40% 45%,
+    rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.35) 15%,
+    rgba(245,245,250,0.22) 30%, rgba(235,235,245,0.10) 50%,
+    rgba(255,255,255,0.04) 68%, transparent 85%);
+  animation: cloudDrift 8s ease-in-out infinite;
+  pointer-events: none; z-index: 0; filter: blur(18px);
+}
+
+@keyframes cloudDrift {
+  0%, 100% { transform: translate(-50%, -50%) scale(1) translate(0, 0); }
+  25% { transform: translate(-50%, -50%) scale(1.06) translate(3%, -2%); }
+  50% { transform: translate(-50%, -50%) scale(1.1) translate(-2%, 1%); }
+  75% { transform: translate(-50%, -50%) scale(1.04) translate(-1%, -3%); }
+}
+
+.cloud-mid {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40vw; height: 38vw;
+  max-width: 580px; max-height: 560px;
+  border-radius: 52% 44% 56% 46%;
+  background: radial-gradient(ellipse at 55% 42%,
+    rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.55) 18%,
+    rgba(248,250,255,0.3) 38%, rgba(240,242,252,0.12) 58%, transparent 78%);
+  animation: cloudDrift 6.5s 1s ease-in-out infinite reverse;
+  pointer-events: none; z-index: 1; filter: blur(10px);
+}
+
+.cloud-core {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 24vw; height: 20vw;
+  max-width: 360px; max-height: 300px;
+  border-radius: 50% 46% 54% 48%;
+  background: radial-gradient(ellipse at center,
+    rgba(255,255,255,1) 0%, rgba(255,255,255,0.85) 20%,
+    rgba(255,255,255,0.45) 45%, rgba(250,250,255,0.15) 68%, transparent 82%);
+  animation: cloudCorePulse 4s ease-in-out infinite;
+  pointer-events: none; z-index: 1; filter: blur(5px);
+}
+
+@keyframes cloudCorePulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.85; }
+  50% { transform: translate(-50%, -50%) scale(1.12); opacity: 1; }
+}
+
+.cloud-fluff {
+  position: absolute; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.3) 40%, transparent 70%);
+  pointer-events: none; z-index: 0; filter: blur(8px);
+  animation: fluffFloat 6s ease-in-out infinite;
+}
+.cloud-fluff:nth-child(4)  { width:140px; height:100px; top:8%;  left:12%; animation-delay:0s; }
+.cloud-fluff:nth-child(5)  { width:180px; height:130px; top:5%;  left:55%; animation-delay:1.2s; }
+.cloud-fluff:nth-child(6)  { width:120px; height:90px;  top:12%; left:78%; animation-delay:2.4s; }
+.cloud-fluff:nth-child(7)  { width:160px; height:110px; top:42%; left:5%;  animation-delay:3.6s; }
+.cloud-fluff:nth-child(8)  { width:200px; height:140px; top:38%; left:82%; animation-delay:0.6s; }
+.cloud-fluff:nth-child(9)  { width:150px; height:100px; top:68%; left:15%; animation-delay:1.8s; }
+.cloud-fluff:nth-child(10) { width:170px; height:120px; top:64%; left:55%; animation-delay:3s; }
+.cloud-fluff:nth-child(11) { width:130px; height:95px;  top:72%; left:75%; animation-delay:4.2s; }
+.cloud-fluff:nth-child(12) { width:110px; height:80px;  top:25%; left:30%; animation-delay:5s; }
+.cloud-fluff:nth-child(13) { width:150px; height:105px; top:55%; left:38%; animation-delay:2.1s; }
+
+@keyframes fluffFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.45; }
+  33% { transform: translate(4%, -6%) scale(1.15); opacity: 0.75; }
+  66% { transform: translate(-3%, 4%) scale(0.92); opacity: 0.55; }
+}
+
+.cloud-glint {
+  position: absolute; width: 3px; height: 3px; border-radius: 50%;
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 0 6px rgba(255,255,255,0.9), 0 0 14px rgba(255,252,248,0.5);
+  pointer-events: none; z-index: 1;
+  animation: glintTwinkle 3.5s ease-in-out infinite;
+}
+.cloud-glint:nth-child(14) { top:10%; left:20%; animation-delay:0s; }
+.cloud-glint:nth-child(15) { top:6%;  left:60%; animation-delay:0.5s; }
+.cloud-glint:nth-child(16) { top:18%; left:85%; animation-delay:1s; }
+.cloud-glint:nth-child(17) { top:35%; left:10%; animation-delay:1.5s; }
+.cloud-glint:nth-child(18) { top:30%; left:90%; animation-delay:2s; }
+.cloud-glint:nth-child(19) { top:55%; left:8%;  animation-delay:2.5s; }
+.cloud-glint:nth-child(20) { top:48%; left:48%; animation-delay:3s; }
+.cloud-glint:nth-child(21) { top:60%; left:80%; animation-delay:0.3s; }
+.cloud-glint:nth-child(22) { top:78%; left:25%; animation-delay:0.8s; }
+.cloud-glint:nth-child(23) { top:82%; left:60%; animation-delay:1.3s; }
+.cloud-glint:nth-child(24) { top:90%; left:42%; animation-delay:1.8s; }
+.cloud-glint:nth-child(25) { top:20%; left:42%; animation-delay:2.3s; }
+
+@keyframes glintTwinkle {
+  0%, 100% { transform: translate(0,0) scale(1); opacity: 0.2; }
+  30% { transform: translate(6px,-10px) scale(1.8); opacity: 1; }
+  60% { transform: translate(-4px,-4px) scale(0.8); opacity: 0.4; }
+  80% { transform: translate(3px,6px) scale(2.2); opacity: 0.9; }
+}
+
+/* 泼水特效 */
+.splash-drop {
+  position: absolute; border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%,
+    rgba(255,255,255,1) 0%, rgba(200,230,250,0.9) 25%,
+    rgba(100,180,225,0.6) 55%, rgba(60,150,210,0.2) 80%, transparent 100%);
+  pointer-events: none; z-index: 3;
+  animation: splashArc 2.5s ease-out infinite; opacity: 0;
+  box-shadow: 0 0 12px rgba(200,230,255,0.6), 0 0 28px rgba(150,210,245,0.35);
+}
+.splash-drop:nth-child(26) { width:22px; height:22px; top:48%; left:8%;  animation-delay:0s; }
+.splash-drop:nth-child(27) { width:30px; height:30px; top:42%; left:3%;  animation-delay:0.35s; }
+.splash-drop:nth-child(28) { width:18px; height:18px; top:44%; left:14%; animation-delay:0.7s; }
+.splash-drop:nth-child(29) { width:26px; height:26px; top:38%; left:6%;  animation-delay:1.05s; }
+.splash-drop:nth-child(30) { width:20px; height:20px; top:50%; left:10%; animation-delay:1.4s; }
+.splash-drop:nth-child(31) { width:24px; height:24px; top:40%; left:12%; animation-delay:1.75s; }
+.splash-drop:nth-child(32) { width:16px; height:16px; top:46%; left:4%;  animation-delay:2.1s; }
+.splash-drop.splash-right:nth-child(33) { width:24px; height:24px; top:42%; left:78%; animation-delay:0.2s; }
+.splash-drop.splash-right:nth-child(34) { width:32px; height:32px; top:38%; left:86%; animation-delay:0.55s; }
+.splash-drop.splash-right:nth-child(35) { width:20px; height:20px; top:48%; left:82%; animation-delay:0.9s; }
+.splash-drop.splash-right:nth-child(36) { width:28px; height:28px; top:35%; left:90%; animation-delay:1.25s; }
+.splash-drop.splash-right:nth-child(37) { width:18px; height:18px; top:44%; left:75%; animation-delay:1.6s; }
+.splash-drop.splash-right:nth-child(38) { width:22px; height:22px; top:50%; left:84%; animation-delay:1.95s; }
+
+@keyframes splashArc {
+  0%   { transform: translate(0, 0) scale(0); opacity: 0; }
+  12%  { transform: translate(var(--sx, 0px), var(--sy, -8px)) scale(1.4); opacity: 1; }
+  35%  { transform: translate(calc(var(--sx) * 2.2), calc(var(--sy) * 2.2 + 10px)) scale(1.1); opacity: 0.75; }
+  100% { transform: translate(calc(var(--sx) * 4.5), calc(var(--sy) * 4.5 + 60px)) scale(0.25); opacity: 0; }
+}
+
+/* 爆发粒子 */
+.splash-burst {
+  position: absolute; width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(220,240,255,1);
+  box-shadow: 0 0 14px rgba(180,220,255,0.9), 0 0 32px rgba(140,200,245,0.55), 0 0 50px rgba(120,190,240,0.25);
+  pointer-events: none; z-index: 3;
+  animation: burstUp 2s ease-out infinite; opacity: 0;
+}
+.splash-burst:nth-child(39) { top:28%; left:48%; animation-delay:0s; }
+.splash-burst:nth-child(40) { top:28%; left:48%; animation-delay:0.12s; }
+.splash-burst:nth-child(41) { top:28%; left:48%; animation-delay:0.24s; }
+.splash-burst:nth-child(42) { top:28%; left:48%; animation-delay:0.36s; }
+.splash-burst:nth-child(43) { top:28%; left:48%; animation-delay:0.48s; }
+.splash-burst:nth-child(44) { top:28%; left:48%; animation-delay:0.6s; }
+.splash-burst:nth-child(45) { top:28%; left:48%; animation-delay:0.72s; }
+.splash-burst:nth-child(46) { top:28%; left:48%; animation-delay:0.84s; }
+.splash-burst:nth-child(47) { top:28%; left:48%; animation-delay:0.96s; }
+.splash-burst:nth-child(48) { top:28%; left:48%; animation-delay:1.08s; }
+.splash-burst:nth-child(49) { top:28%; left:48%; animation-delay:1.2s; }
+.splash-burst:nth-child(50) { top:28%; left:48%; animation-delay:1.32s; }
+.splash-burst:nth-child(51) { top:28%; left:48%; animation-delay:1.44s; }
+.splash-burst:nth-child(52) { top:28%; left:48%; animation-delay:1.56s; }
+.splash-burst:nth-child(53) { top:28%; left:48%; animation-delay:0.06s; }
+.splash-burst:nth-child(54) { top:28%; left:48%; animation-delay:0.18s; }
+.splash-burst:nth-child(55) { top:28%; left:48%; animation-delay:0.3s; }
+.splash-burst:nth-child(56) { top:28%; left:48%; animation-delay:0.42s; }
+.splash-burst:nth-child(57) { top:28%; left:48%; animation-delay:0.54s; }
+.splash-burst:nth-child(58) { top:28%; left:48%; animation-delay:0.66s; }
+
+@keyframes burstUp {
+  0%   { transform: translate(0, 0) scale(0); opacity: 0; }
+  8%   { opacity: 1; transform: translate(calc(var(--bx, 0px) * 0.25), calc(var(--by, -3px) * 0.25)) scale(1.2); }
+  40%  { opacity: 0.7; transform: translate(var(--bx), var(--by)) scale(1.8); }
+  100% { opacity: 0; transform: translate(calc(var(--bx) * 3.5), calc(var(--by) * 3.5 + 50px)) scale(0.15); }
+}
+
+.hero-video-wrap video {
+  height: 95vh; max-height: 900px; width: auto;
+  display: block; position: relative; z-index: 2;
+  filter: drop-shadow(0 6px 28px rgba(0,0,0,0.22)) drop-shadow(0 0 80px rgba(255,255,255,0.5));
+}
+
+.hero-text-col {
+  flex: 0 0 auto; max-width: 560px;
+  display: flex; flex-direction: column; gap: 1.2vh;
+}
+
+/* Hero intro */
+.hero-intro {
+  font-family: 'KaiTi', 'STKaiti', '楷体', var(--font-body);
+  font-size: clamp(1.15rem, 1.6vw, 1.4rem);
+  line-height: 2.3; color: var(--ink); max-width: 560px;
+}
+
+.hero-line-item {
+  display: block; opacity: 0;
+  animation: lineFadeIn 0.7s ease forwards;
+}
+.hero-line-item:nth-child(1) { animation-delay: 0.5s; }
+.hero-line-item:nth-child(2) { animation-delay: 1.0s; }
+.hero-line-item:nth-child(3) { animation-delay: 1.6s; }
+.hero-line-item:nth-child(4) { animation-delay: 2.2s; }
+
+@keyframes lineFadeIn {
+  0% { opacity: 0; transform: translateY(14px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.hero-intro-highlight { color: #b84c4c; font-weight: 500; display: inline; }
+
+/* ===== 泼水节叙事 ===== */
+.vert-step-label {
+  font-family: var(--font-title);
+  font-size: clamp(1.3rem, 1.8vw, 1.6rem);
+  font-weight: 900; color: var(--gold-light);
+  letter-spacing: 0.1em; margin-bottom: -0.2rem;
+  text-shadow: 0 2px 8px rgba(184,134,11,0.3), 0 0 20px rgba(184,134,11,0.15), 2px 3px 6px rgba(0,0,0,0.35), 0 0 2px rgba(0,0,0,0.5);
+}
+
+.vert-step-title {
+  font-family: var(--font-title);
+  font-size: clamp(2.4rem, 4vw, 3.6rem);
+  font-weight: 900; color: var(--vermillion);
+  letter-spacing: 0.06em; line-height: 1.2;
+}
+
+.vert-intro {
+  font-family: 'KaiTi', 'STKaiti', '楷体', var(--font-title);
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+  color: var(--ink); line-height: 1.6;
+}
+
+.vert-body {
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 1.05vw, 1rem);
+  line-height: 1.85; color: var(--ink-light);
+}
+
+.vert-question {
+  font-family: var(--font-title);
+  font-size: clamp(1.1rem, 1.5vw, 1.3rem);
+  font-weight: 700; color: var(--vermillion);
+}
+
+.vert-punch {
+  font-family: var(--font-title);
+  font-size: clamp(1.1rem, 1.5vw, 1.3rem);
+  font-weight: 700; color: var(--vermillion);
+  text-align: center; padding: 0.4rem 0; letter-spacing: 0.04em;
+}
+
+.vert-red-box {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+}
+
+.vert-cloud-box {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  padding: 0.8rem 1.2rem;
+}
+
+.vert-chart-wrap { width: 100%; height: 220px; }
+
+.vert-iframe-wrap {
+  width: 100%; height: 260px; overflow: hidden; border-radius: 10px;
+  background: var(--glass-bg); backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); border: 1px solid var(--glass-border);
+}
+
+.vert-iframe-wrap iframe { width: 100%; height: 320px; border: none; margin-top: -35px; }
+
+.vert-sep { width: 40px; height: 2px; background: var(--gold); opacity: 0.35; margin: 0.4rem 0; }
+
+/* 三栏布局 */
+#scene-water .scene-inner {
+  flex-direction: column; align-items: center;
+  justify-content: flex-start; padding: 2vh 4vw; gap: 1.2vh;
+}
+
+.vert-triple-header { text-align: center; flex-shrink: 0; }
+.vert-triple-header .vert-step-title { font-size: clamp(2rem, 3vw, 2.8rem); }
+
+.vert-triple-title-row { position: relative; display: inline-block; text-align: center; }
+
+.vert-intro-side {
+  position: absolute; top: 50%; left: calc(100% + 1.5vw); transform: translateY(-50%);
+  font-family: 'KaiTi', 'STKaiti', '楷体', var(--font-title);
+  font-size: clamp(1.3rem, 1.8vw, 1.6rem);
+  font-weight: 600; color: #5b8c5a; opacity: 0;
+  letter-spacing: 0.04em; white-space: nowrap;
+  text-shadow: 1px 2px 4px rgba(0,0,0,0.25);
+}
+
+.vert-triple-row { display: flex; gap: 2.8vw; width: 100%; flex: 1; min-height: 0; }
+
+.vert-triple-col {
+  flex: 1; display: flex; flex-direction: column; gap: 0.5rem; min-width: 0;
+  opacity: 0;
+}
+
+.vert-triple-col .vert-chart-wrap { height: 280px; }
+.vert-triple-col .vert-iframe-wrap { height: 340px; }
+.vert-triple-col .vert-iframe-wrap iframe { height: 410px; margin-top: -45px; }
+.vert-triple-col .vert-body { font-size: clamp(0.82rem, 0.95vw, 0.95rem); line-height: 1.7; }
+
+.vert-triple-footer { text-align: center; flex-shrink: 0; }
+
+/* ===== 二 ===== */
+#scene-water-b .scene-inner {
+  flex-direction: column; justify-content: center;
+  align-items: center; padding: 8vh 4vw; gap: 2vh;
+  overflow: hidden;
+}
+.waterb-big-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+  width: 320px; padding: 2rem;
+  background: var(--glass-bg); backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px solid var(--glass-border); border-radius: 16px;
+  font-family: var(--font-title); font-size: 1.1rem;
+  color: var(--ink); cursor: pointer;
+  transition: all 0.35s ease;
+}
+.waterb-big-btn:hover {
+  border-color: var(--gold-light);
+  box-shadow: 0 8px 32px rgba(184,134,11,0.18);
+  transform: translateY(-3px);
+}
+.waterb-line { opacity: 0; }
+
+/* ===== 三：节庆词云切换 ===== */
+.fest-tab-btn {
+  padding: 0.55rem 1.4rem;
+  background: var(--glass-bg); backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid var(--glass-border); border-radius: 24px;
+  font-family: var(--font-title); font-size: clamp(0.9rem, 1.1vw, 1rem);
+  color: var(--ink-muted); cursor: pointer;
+  transition: all 0.3s ease;
+}
+.fest-tab-btn:hover { border-color: var(--gold); color: var(--ink); }
+.fest-tab-active { border-color: var(--vermillion); color: var(--vermillion); font-weight: 700; }
+
+.ending-line { opacity: 0; }
+/* 大数字 */
+.big-number-wrap { display: flex; align-items: baseline; gap: 10px; }
+.big-number-value {
+  font-family: var(--font-title);
+  font-size: clamp(3rem, 5vw, 5rem);
+  font-weight: 900; color: var(--vermillion);
+  line-height: 1; font-variant-numeric: tabular-nums;
+}
+.big-number-unit { font-size: 0.95rem; color: var(--ink-muted); line-height: 1.5; }
+
+/* 引语 */
+.quote-card-special {
+  background: linear-gradient(135deg, rgba(184,134,11,0.07), rgba(139,0,0,0.03));
+  border: 1px solid rgba(184,134,11,0.18);
+  border-radius: 14px; padding: 1.8rem 1.8rem 1.8rem 2.8rem; position: relative;
+}
+
+.quote-card-special::before {
+  content: '"'; position: absolute; top: 0; left: 12px;
+  font-family: var(--font-title); font-size: 3.5rem;
+  color: var(--gold); opacity: 0.32; line-height: 1;
+}
+
+.quote-text {
+  font-family: var(--font-title); font-size: 1rem;
+  line-height: 1.85; color: var(--ink-light); font-style: italic;
+}
+.quote-source { font-size: 0.8rem; color: var(--ink-muted); margin-top: 0.8rem; text-align: right; }
+
+.map-title {
+  font-family: var(--font-title); font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+  font-weight: 700; color: var(--vermillion); text-align: center;
+  margin-bottom: 0.5vh; letter-spacing: 0.05em;
+}
+.map-subtitle { font-size: 0.9rem; color: var(--ink-muted); text-align: center; margin-bottom: 1vh; }
+
+.map-legend {
+  display: flex; justify-content: center; gap: 2rem;
+  margin-top: 1vh; font-size: 0.82rem; color: var(--ink-muted); flex-wrap: wrap;
+}
+.map-legend span { display: flex; align-items: center; gap: 6px; }
+.map-legend .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold-light); box-shadow: 0 0 6px var(--gold-light); }
+
+/* 结尾 */
+.ending-grid { display: flex; gap: 2rem; margin: 3vh 0; flex-wrap: wrap; justify-content: center; }
+
+.ending-card-el {
+  flex: 0 0 240px; background: var(--glass-bg);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border); border-radius: 16px;
+  padding: 2rem 1.6rem; text-align: center;
+  box-shadow: var(--glass-shadow);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.ending-card-el:hover { transform: translateY(-5px); box-shadow: 0 10px 40px rgba(61, 43, 31, 0.1); }
+.ending-card-el .card-icon { font-size: 2.4rem; margin-bottom: 0.8rem; }
+.ending-card-el .card-title { font-family: var(--font-title); font-size: 1.4rem; font-weight: 700; color: var(--vermillion); margin-bottom: 0.6rem; }
+.ending-card-el .card-desc { font-size: 0.85rem; color: var(--ink-muted); line-height: 1.75; }
+
+.ending-signature { font-size: 0.78rem; color: var(--ink-muted); text-align: center; margin-top: 1.5rem; letter-spacing: 0.05em; }
+.ending-signature p { margin-bottom: 3px; }
+
+/* 滚动提示 — 位于导航右侧 */
+.scroll-hint-banner {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.78rem; color: var(--ink-muted); letter-spacing: 0.04em;
+  opacity: 0.55; animation: hintFade 2.5s ease-in-out infinite; pointer-events: none;
+  margin-left: 4px;
+}
+.scroll-hint-banner .arrow { animation: hintArrow 1.3s ease-in-out infinite; font-size: 1rem; }
+
+@keyframes hintFade { 0%,100% { opacity: 0.35; } 50% { opacity: 0.75; } }
+@keyframes hintArrow { 0%,100% { transform: translateX(0); } 50% { transform: translateX(10px); } }
+
+/* 底部指示器 */
+#chapter-indicator {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+  z-index: 10; display: flex; gap: 10px; align-items: center;
+  background: rgba(255,248,240,0.72); backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(139,0,0,0.08);
+  border-radius: 40px; padding: 9px 20px;
+}
+
+.indicator-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(139,115,85,0.3); cursor: pointer;
+  transition: all 0.4s ease;
+}
+
+.indicator-dot.active { background: var(--vermillion); box-shadow: 0 0 8px rgba(139,0,0,0.4); transform: scale(1.4); }
+.indicator-dot.visited { background: rgba(139,0,0,0.35); }
+
+.indicator-label { font-size: 0.7rem; color: var(--ink-muted); letter-spacing: 0.04em; white-space: nowrap; }
+.indicator-dot.active + .indicator-label { color: var(--vermillion); font-weight: 600; }
+
+/* 图表容器 */
+.chart-box { width: 100%; height: 260px; }
+.chart-box-sm { height: 200px; }
+.chart-box-map { width: 100%; height: 85vh; max-height: 800px; }
+
+/* ================================================================
+   响应式 (≤768px)
+   ================================================================ */
+@media (max-width: 768px) {
+  .scene-inner { flex-direction: column !important; padding: 0 5vw; justify-content: center; gap: 1.5rem; }
+  .scene-left, .scene-right { flex: 0 0 auto; width: 100%; padding: 0; margin: 0; }
+  .section-title { font-size: 1.5rem; text-align: center; }
+  .section-body { font-size: 0.85rem; }
+  #scene-hero .scene-inner { flex-direction: column !important; text-align: center; padding-top: 6vh; gap: 2vh; }
+  .hero-video-wrap video { height: 58vh; max-height: 440px; }
+  .hero-text-col { max-width: 85vw; }
+  .hero-intro { font-size: 1.15rem; }
+  .glass-card { padding: 1.4rem; }
+  .chart-box { height: 220px; }
+  .chart-box-sm { height: 180px; }
+  .chart-box-map { height: 58vh; }
+  #festival-panel { max-height: 260px !important; max-width: 260px !important; font-size: 12px !important; }
+  .big-number-value { font-size: 2.6rem; }
+  .quote-card-special { padding: 1.4rem 1.4rem 1.4rem 2.2rem; }
+  .vert-step-title { font-size: 1.5rem; }
+  .vert-intro { font-size: 0.9rem; }
+  .vert-chart-wrap { height: 190px; }
+  .vert-iframe-wrap { height: 220px; }
+  .vert-iframe-wrap iframe { height: 280px; margin-top: -30px; }
+  .vert-body { font-size: 0.82rem; }
+  .vert-question { font-size: 1.05rem; }
+  .vert-punch { font-size: 0.95rem; }
+  .vert-triple-row { gap: 1.8vw; }
+  .vert-triple-col .vert-chart-wrap { height: 200px; }
+  .vert-triple-col .vert-iframe-wrap { height: 240px; }
+  .vert-triple-col .vert-iframe-wrap iframe { height: 290px; margin-top: -30px; }
+  .vert-triple-col .vert-body { font-size: 0.78rem; }
+  .vert-triple-header .vert-step-title { font-size: 1.6rem; }
+  .scene-water-b-row { flex-direction: column; gap: 1rem; }
+  .scene-water-b-row .scene-left,
+  .scene-water-b-row .scene-right { flex: 0 0 auto; width: 100%; }
+        
+  .ending-grid { gap: 1rem; }
+  .ending-card-el { flex: 0 0 180px; padding: 1.4rem 1rem; }
+  .grass-blade { display: none; }
+  .grass-blade:nth-child(odd) { display: block; }
+  .water-drop { display: none; }
+  .water-drop:nth-child(5),.water-drop:nth-child(7),.water-drop:nth-child(9),.water-drop:nth-child(11) { display: block; }
+  #traveler { transform: translateX(-50%) scale(0.8); }
+  #chapter-indicator { bottom: 20px; padding: 7px 16px; gap: 7px; }
+  .indicator-dot { width: 7px; height: 7px; }
+  .indicator-label { font-size: 0.62rem; }
+}
+
+/* ================================================================
+   响应式 (≤480px)
+   ================================================================ */
+@media (max-width: 480px) {
+  .hero-video-wrap video { height: 50vh; max-height: 340px; }
+  .hero-intro { font-size: 1rem; }
+  .section-title { font-size: 1.3rem; }
+  .section-body { font-size: 0.8rem; }
+  .glass-card { padding: 1.1rem; }
+  .chart-box { height: 180px; }
+  .chart-box-sm { height: 150px; }
+  .chart-box-map { height: 50vh; }
+  #festival-panel { max-height: 220px !important; max-width: 220px !important; font-size: 11px !important; }
+  .big-number-value { font-size: 2.2rem; }
+  .vert-step-title { font-size: 1.3rem; }
+  .vert-intro { font-size: 0.85rem; }
+  .vert-chart-wrap { height: 170px; }
+  .vert-iframe-wrap { height: 190px; }
+  .vert-iframe-wrap iframe { height: 240px; margin-top: -28px; }
+  .vert-body { font-size: 0.78rem; }
+  .vert-question { font-size: 0.95rem; }
+  .vert-punch { font-size: 0.85rem; }
+  #scene-water .scene-inner { padding: 1vh 2vw; }
+  .vert-triple-row { flex-direction: column; gap: 1rem; }
+  .vert-triple-col { flex: 0 0 auto; }
+  .vert-triple-col .vert-chart-wrap { height: 160px; }
+  .vert-triple-col .vert-iframe-wrap { height: 180px; }
+  .vert-triple-col .vert-iframe-wrap iframe { height: 220px; margin-top: -25px; }
+  .vert-triple-col .vert-body { font-size: 0.78rem; }
+  .vert-triple-header .vert-step-title { font-size: 1.4rem; }
+  .scene-water-b-row { flex-direction: column; gap: 0.8rem; }
+  .scene-water-b-row .scene-left,
+  .scene-water-b-row .scene-right { flex: 0 0 auto; width: 100%; }
+        
+  .ending-grid { flex-direction: column; align-items: center; }
+  .ending-card-el { max-width: 260px; width: 100%; }
+  #traveler { transform: translateX(-50%) scale(0.65); }
+  .water-ripple { display: none; }
+  .water-ripple:nth-child(1), .water-ripple:nth-child(3) { display: block; }
+  .water-lotus { display: none; }
+  .water-lotus:nth-child(14) { display: block; }
+  .grass-horse { display: none; }
+  .grass-horse:nth-child(19) { display: block; }
+  .grass-yurt { display: none; }
+  .grass-yurt:nth-child(21) { display: block; }
+  .grass-eagle { display: none; }
+  .map-dot { display: none; }
+  .map-dot:nth-child(1),.map-dot:nth-child(2),.map-dot:nth-child(4),.map-dot:nth-child(5) { display: block; }
+  .map-line, .map-blob { display: none; }
+  .nadam-spark { display: none; }
+  #chapter-indicator { bottom: 16px; padding: 6px 14px; gap: 6px; }
+  .indicator-dot { width: 6px; height: 6px; }
+  .indicator-label { font-size: 0.58rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ========== 第一层：永恒背景 ========== -->
+<div id="eternal-bg"><img src="背景.png" alt="背景"></div>
+
+<!-- ========== 第二层：粒子 ========== -->
+<canvas id="particle-canvas"></canvas>
+
+<!-- 泼水节氛围 -->
+<div id="env-water" class="atm-layer" style="opacity: 1;">
+  <div class="water-ripple"></div><div class="water-ripple"></div><div class="water-ripple"></div><div class="water-ripple"></div>
+  <div class="water-drop"></div><div class="water-drop"></div><div class="water-drop"></div><div class="water-drop"></div>
+  <div class="water-drop"></div><div class="water-drop"></div><div class="water-drop"></div><div class="water-drop"></div>
+  <div class="water-lotus">🪷</div><div class="water-lotus">🪷</div><div class="water-lotus">🌸</div>
+  <div class="water-shimmer"></div><div class="water-shimmer"></div><div class="water-shimmer"></div>
+  <img class="water-prop" id="prop-elephants" src="大象.png" alt="大象">
+  <img class="water-prop" id="prop-people3" src="三个人.png" alt="三人">
+  <img class="water-prop" id="prop-building" src="建筑.png" alt="建筑">
+  <img class="water-prop" id="prop-jar" src="水缸.png" alt="水缸">
+</div>
+
+<!-- 那达慕氛围 -->
+<div id="env-grass" class="atm-layer" style="opacity: 0;">
+  <div class="grass-blade"></div><div class="grass-blade"></div><div class="grass-blade"></div><div class="grass-blade"></div>
+  <div class="grass-blade"></div><div class="grass-blade"></div><div class="grass-blade"></div><div class="grass-blade"></div>
+  <div class="grass-blade"></div><div class="grass-blade"></div><div class="grass-blade"></div><div class="grass-blade"></div>
+  <div class="grass-blade"></div><div class="grass-blade"></div><div class="grass-blade"></div><div class="grass-blade"></div><div class="grass-blade"></div>
+  <div class="grass-horse">🐴</div><div class="grass-horse">🐎</div><div class="grass-horse">🏇</div>
+  <div class="grass-yurt">🏕️</div><div class="grass-yurt">⛺</div>
+  <div class="grass-eagle">🦅</div><div class="grass-eagle">🦅</div>
+  <div class="nadam-spark"></div><div class="nadam-spark"></div><div class="nadam-spark"></div><div class="nadam-spark"></div><div class="nadam-spark"></div>
+  <img class="nadam-prop" id="prop-xinjiang" src="新疆女孩.png" alt="新疆女孩">
+  <img class="nadam-prop" id="prop-zhuangzu" src="壮族女孩.png" alt="壮族女孩">
+  <img class="nadam-prop" id="prop-wrestle" src="格斗.png" alt="格斗">
+</div>
+
+<!-- 地图氛围 -->
+<div id="env-map" class="atm-layer" style="opacity: 0;">
+  <div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div>
+  <div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div>
+  <div class="map-line"></div><div class="map-line"></div><div class="map-line"></div>
+  <div class="map-blob"></div><div class="map-blob"></div><div class="map-blob"></div>
+</div>
+
+<!-- ========== 小人 ========== -->
+<div id="traveler">
+  <div class="traveler-aura"></div>
+  <div class="traveler-shadow"></div>
+  <video id="traveler-video" src="character_green.webm" loop muted playsinline autoplay></video>
+  <div class="traveler-particle" style="--dx:-25px; --dy:-30px;"></div>
+  <div class="traveler-particle" style="--dx:28px;  --dy:-22px;"></div>
+  <div class="traveler-particle" style="--dx:-20px; --dy:35px;"></div>
+  <div class="traveler-particle" style="--dx:30px;  --dy:30px;"></div>
+  <div class="traveler-particle" style="--dx:-32px; --dy:5px;"></div>
+  <div class="traveler-particle" style="--dx:35px;  --dy:-8px;"></div>
+  <div class="traveler-particle" style="--dx:0;     --dy:-38px;"></div>
+</div>
+
+<!-- ========== 第三层：滚动 ========== -->
+<div id="scroll-trigger"></div>
+
+<div id="scroll-container">
+  <div id="sections-wrapper">
+
+    <!-- ===== 0. Hero 开篇 ===== -->
+    <section class="scene" id="scene-hero" data-chapter="hero">
+      <div class="scene-inner">
+        <div class="hero-video-wrap">
+          <div class="hero-video-stage">
+            <div class="cloud-base"></div><div class="cloud-mid"></div><div class="cloud-core"></div>
+            <div class="cloud-fluff"></div><div class="cloud-fluff"></div><div class="cloud-fluff"></div><div class="cloud-fluff"></div>
+            <div class="cloud-fluff"></div><div class="cloud-fluff"></div><div class="cloud-fluff"></div><div class="cloud-fluff"></div><div class="cloud-fluff"></div><div class="cloud-fluff"></div>
+            <div class="cloud-glint"></div><div class="cloud-glint"></div><div class="cloud-glint"></div><div class="cloud-glint"></div>
+            <div class="cloud-glint"></div><div class="cloud-glint"></div><div class="cloud-glint"></div><div class="cloud-glint"></div>
+            <div class="cloud-glint"></div><div class="cloud-glint"></div><div class="cloud-glint"></div><div class="cloud-glint"></div>
+            <div class="splash-drop" style="--sx:-55px;--sy:-50px;"></div>
+            <div class="splash-drop" style="--sx:-40px;--sy:-62px;"></div>
+            <div class="splash-drop" style="--sx:-62px;--sy:-36px;"></div>
+            <div class="splash-drop" style="--sx:-35px;--sy:-68px;"></div>
+            <div class="splash-drop" style="--sx:-50px;--sy:-44px;"></div>
+            <div class="splash-drop" style="--sx:-44px;--sy:-55px;"></div>
+            <div class="splash-drop" style="--sx:-28px;--sy:-58px;"></div>
+            <div class="splash-drop splash-right" style="--sx:55px;--sy:-50px;"></div>
+            <div class="splash-drop splash-right" style="--sx:42px;--sy:-62px;"></div>
+            <div class="splash-drop splash-right" style="--sx:60px;--sy:-38px;"></div>
+            <div class="splash-drop splash-right" style="--sx:50px;--sy:-55px;"></div>
+            <div class="splash-drop splash-right" style="--sx:36px;--sy:-66px;"></div>
+            <div class="splash-drop splash-right" style="--sx:56px;--sy:-48px;"></div>
+            <div class="splash-burst" style="--bx:-22px;--by:-60px;"></div>
+            <div class="splash-burst" style="--bx:26px;--by:-52px;"></div>
+            <div class="splash-burst" style="--bx:-35px;--by:-42px;"></div>
+            <div class="splash-burst" style="--bx:10px;--by:-65px;"></div>
+            <div class="splash-burst" style="--bx:-15px;--by:-58px;"></div>
+            <div class="splash-burst" style="--bx:30px;--by:-48px;"></div>
+            <div class="splash-burst" style="--bx:-28px;--by:-55px;"></div>
+            <div class="splash-burst" style="--bx:18px;--by:-62px;"></div>
+            <div class="splash-burst" style="--bx:-10px;--by:-56px;"></div>
+            <div class="splash-burst" style="--bx:35px;--by:-40px;"></div>
+            <div class="splash-burst" style="--bx:-20px;--by:-50px;"></div>
+            <div class="splash-burst" style="--bx:28px;--by:-58px;"></div>
+            <div class="splash-burst" style="--bx:-32px;--by:-38px;"></div>
+            <div class="splash-burst" style="--bx:14px;--by:-60px;"></div>
+            <div class="splash-burst" style="--bx:-25px;--by:-45px;"></div>
+            <div class="splash-burst" style="--bx:32px;--by:-55px;"></div>
+            <div class="splash-burst" style="--bx:-18px;--by:-52px;"></div>
+            <div class="splash-burst" style="--bx:40px;--by:-36px;"></div>
+            <div class="splash-burst" style="--bx:-12px;--by:-62px;"></div>
+            <div class="splash-burst" style="--bx:22px;--by:-50px;"></div>
+            <video src="标题_transparent.webm" id="hero-title-video" loop muted playsinline autoplay></video>
+          </div>
+        </div>
+        <div class="hero-text-col">
+          <p class="hero-intro">
+          <span class="hero-line-item">每年四月，有一件事会在西双版纳准时发生。</span>
+          <span class="hero-line-item">街道被淹没。不是洪水，是人。</span>
+          <span class="hero-line-item">来自天南地北的陌生人，挤进同一条街，用同一盆水互相泼湿，然后哈哈大笑。没有人是局外人。</span>
+          <span class="hero-intro-highlight hero-line-item">泼水节，到底为什么这么火？</span>
+        </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 1. 泼水节 ===== -->
+    <section class="scene" id="scene-water" data-chapter="water">
+      <div class="scene-inner">
+        <div class="vert-triple-header">
+          <div class="vert-step-label">一</div>
+          <div class="vert-triple-title-row">
+            <h2 class="vert-step-title">人，先聚在一起</h2>
+            <span class="vert-intro-side" style="color:#fff;">所有的交流，都从"到场"开始。</span>
+          </div>
+        </div>
+        <div class="vert-triple-row">
+          <div class="vert-triple-col">
+            <div class="vert-chart-wrap" id="chart-water-growth"></div>
+            <p class="vert-body " style="font-size:clamp(0.95rem,1.15vw,1.1rem);">西双版纳泼水节的游客数字，三年来一路走高：2024年203.19万人次，2025年222.63万，到2026年达到了238.08万。三年间增长了约17%，相当于每年多来一座中等城市的人口。</p>
+            <p class="vert-question vert-red-box">这些人，从哪里来？</p>
+          </div>
+          <div class="vert-triple-col">
+            <div class="vert-iframe-wrap">
+              <iframe src="https://dycharts.com/xshow/index.html?id=c_2fff83f4ba84673ff926358ff1522f51" scrolling="no" frameborder="0"></iframe>
+            </div>
+            <p class="vert-body" style="font-size:clamp(0.95rem,1.15vw,1.1rem);">4月10日前，西双版纳迁入指数仅0.417；4月13日触及峰值0.807，几乎是节前的两倍。节庆结束回落至0.231。</p>
+            <p class="vert-punch vert-red-box">一涨一落，是百万人在同一时间做了同一个决定。</p>
+          </div>
+          <div class="vert-triple-col">
+            <div class="vert-iframe-wrap">
+              <iframe src="https://dycharts.com/xshow/index.html?id=c_c32176c306fda50dd9a04766bccd3f15" scrolling="no" frameborder="0"></iframe>
+            </div>
+            <p class="vert-body " style="font-size:clamp(0.95rem,1.15vw,1.1rem);">峰值日迁入人流中，普洱33.77%，昆明20.37%，省外其他城市41.99%。超过四成的人专程奔赴而来。</p>
+            <p class="vert-punch vert-red-box">他们选择了同一个节点，汇入同一条街道。</p>
+          </div>
+        </div>
+        <div class="vert-triple-footer"></div>
+      </div>
+    </section>
+
+    
+    <!-- ===== 1b. 泼水节：谁来了 ===== -->
+    <section class="scene" id="scene-water-b" data-chapter="water-b">
+      <div class="scene-inner">
+        <div style="text-align:center;width:100%;">
+          <div class="vert-step-label">二</div>
+          <h2 class="vert-step-title">谁来了，他们是什么人</h2>
+        </div>
+        <div style="display:flex;width:100%;gap:3vw;align-items:flex-start;flex:1;min-height:0;">
+          <div style="flex:0 0 50%;display:flex;flex-direction:column;gap:0.6rem;padding-top:8vh;">
+            <p class="vert-body waterb-line" style="font-size:clamp(0.95rem,1.15vw,1.1rem);">西双版纳州文旅局的数据显示，2026年泼水节游客中，女性占57.1%，男性占42.9%；年龄结构上，90后是最大的单一群体，占比34.4%。</p>
+            <p class="vert-body waterb-line" style="font-size:clamp(0.95rem,1.15vw,1.1rem);">这意味着，走进泼水节的人，相当大比例是当下中国最活跃的内容生产者——他们拍视频，写评论，把自己的体验发到网上，变成下一个人出发的理由。</p>
+            <p class="vert-punch waterb-line">节庆本身是吸引力，社交分享是放大器。每一个被泼湿的笑脸，都在成为下一年238万人中的某一个人的起点。</p>
+          </div>
+          <div id="waterb-btns" style="flex:0 0 38%;display:flex;flex-direction:column;align-items:center;gap:1.5vh;">
+            <button class="waterb-big-btn" onclick="document.getElementById('waterb-btns').style.display='none';document.getElementById('waterb-overlay').style.display='flex';document.getElementById('waterb-gender-chart').style.display='block'">
+              <span style="font-size:2.4rem;">👤</span>
+              <span>点击查看游客性别构成</span>
+            </button>
+            <button class="waterb-big-btn" onclick="document.getElementById('waterb-btns').style.display='none';document.getElementById('waterb-overlay').style.display='flex';document.getElementById('waterb-age-chart').style.display='block'">
+              <span style="font-size:2.4rem;">📊</span>
+              <span>点击查看游客年龄构成</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 2. 节庆切换：词云 ===== -->
+    <section class="scene" id="scene-nadam" data-chapter="nadam">
+      <div class="scene-inner" style="flex-direction:column;align-items:center;justify-content:flex-start;padding:5vh 4vw 8vh 4vw;overflow:hidden;">
+        <div style="text-align:center;">
+          <div class="vert-step-label">三</div>
+          <h2 class="vert-step-title">节庆，如何成为"公共语言"</h2>
+        </div>
+        <p class="vert-body" style="text-align:center;max-width:700px;margin:0.6vh 0;">人聚在一起，发生的不只是狂欢。当那达慕、古尔邦节、三月三的讨论在网络上蔓延，它们便打破了地理与族群的边界。网络世界里涌动的数据、符号与情绪，正在将具体的民族符号，编织成一种打破隔阂的、流动的"公共语言"。</p>
+        <!-- 三个切换按钮 -->
+        <div style="display:flex;gap:1.2vw;margin:1.5vh 0 1vh 0;flex-wrap:wrap;justify-content:center;">
+          <button class="fest-tab-btn fest-tab-active" id="fest-tab-nadam" onclick="switchFestTab('nadam')">🏇 那达慕</button>
+          <button class="fest-tab-btn" id="fest-tab-gurban" onclick="switchFestTab('gurban')">🌟 古尔邦节</button>
+          <button class="fest-tab-btn" id="fest-tab-sanyue" onclick="switchFestTab('sanyue')">🎵 三月三</button>
+        </div>
+        <!-- 那达慕卡片 -->
+        <div class="fest-card" id="fest-card-nadam" style="display:flex;gap:2vw;align-items:flex-start;flex:1;min-height:0;width:100%;">
+          <div style="flex:0 0 380px;display:flex;align-items:center;justify-content:center;">
+            <img src="那达慕词云.png" alt="那达慕词云" style="width:100%;height:auto;max-height:58vh;object-fit:contain;">
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:0.5rem;padding-top:0;">
+            <p class="vert-body vert-cloud-box" style="font-size:clamp(1rem,1.3vw,1.15rem);line-height:1.9;">那达慕的词云，是辽阔的。<br><br>"原""盛会""骑马""射箭""文旅""共同""团结""国旗"——既是具体的草原气息，也是清晰的共同体指向。"游客"和"文旅"高居词云中心，说明那达慕早已不只属于内蒙古，它属于所有赶去看过白马奔跑的人。</p>
+          </div>
+        </div>
+        <!-- 古尔邦节卡片 -->
+        <div class="fest-card" id="fest-card-gurban" style="display:none;gap:2vw;align-items:flex-start;flex:1;min-height:0;width:100%;">
+          <div style="flex:0 0 380px;display:flex;align-items:center;justify-content:center;">
+            <img src="古邦尔词云.png" alt="古尔邦节词云" style="width:100%;height:auto;max-height:58vh;object-fit:contain;">
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:0.5rem;padding-top:0;">
+            <p class="vert-body vert-cloud-box" style="font-size:clamp(1rem,1.3vw,1.15rem);line-height:1.9;">古尔邦节的词云，是温热的。<br><br>"回家""放假""烤肉""朋友""亲情""祝福"——节日首先是家的方向，然后才是向外张望的窗口。而"迪丽热巴"赫然出现在词云里，流行文化正在成为不同群体之间最轻盈的桥梁，把遥远的新疆带进了更多普通人的日常想象。</p>
+          </div>
+        </div>
+        <!-- 三月三卡片 -->
+        <div class="fest-card" id="fest-card-sanyue" style="display:none;gap:2vw;align-items:flex-start;flex:1;min-height:0;width:100%;">
+          <div style="flex:0 0 380px;display:flex;align-items:center;justify-content:center;">
+            <img src="三月三词云.png" alt="三月三词云" style="width:100%;height:auto;max-height:58vh;object-fit:contain;">
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:0.5rem;padding-top:0;">
+            <p class="vert-body vert-cloud-box" style="font-size:clamp(1rem,1.3vw,1.15rem);line-height:1.9;">三月三的词云，是一首活着的歌。<br><br>"广西""壮族""山歌""刘三姐""竹竿舞""五色糯米饭""长桌宴"——非遗不在博物馆里，它在南宁的歌圩里，在年轻人的朋友圈里，在"非遗"两个字被越来越多人认识的过程里。</p>
+          </div>
+        </div>
+        <!-- 底部统一结语 -->
+        <p class="vert-punch" style="margin-top:0;padding-top:0;">我们可以透过三套词云，看到三副截然不同却又彼此共鸣的面孔。</p>
+        <p class="vert-punch" style="padding-top:0;">每一张，都是一个民族在说：我在这里，欢迎你来认识我。</p>
+      </div>
+    </section>
+
+<!-- ===== 3. 全国地图 ===== -->
+    <section class="scene" id="scene-map" data-chapter="map">
+      <div class="scene-inner" style="flex-direction:column;align-items:center;padding:2vh 4vw;overflow:hidden;">
+        <div style="width:100%;position:relative;">
+          <div class="chart-box-map" id="chart-map"></div>
+          <div style="position:absolute; top:8px; left:16px; z-index:50; pointer-events:none;">
+            <h2 class="map-title">全国代表性民族节庆分布</h2>
+            <p class="map-subtitle" style="text-align:left;font-size:clamp(1rem,1.25vw,1.15rem);font-weight:600;">点击地图标记查看该地区所有节庆</p>
+            <h3 class="vert-step-title" style="font-size:clamp(2rem,3.2vw,2.6rem);color:var(--vermillion);margin-top:1.8vh;"><span class="vert-step-label" style="display:block;margin-bottom:0.3vh;">四</span>不只是泼水节</h3>
+          </div>
+          <div style="position:absolute;bottom:60px;left:16px;z-index:50;pointer-events:none;max-width:440px;">
+            <p class="vert-body" style="color:var(--ink-light);text-align:left;font-size:clamp(1rem,1.3vw,1.2rem);line-height:1.9;font-weight:500;">那达慕在草原，古尔邦节在新疆，三月三在广西，泼水节在云南——每一个节庆，都是一扇窗。它们散落在中国版图的不同角落，却在同一个社交媒体时代同时被打开。</p>
+          </div>
+          <div id="festival-panel" style="opacity:0; transform:translateY(8px) scale(0.96); transition:opacity 0.3s ease, transform 0.3s ease; position:absolute; z-index:100; background:rgba(255,248,240,0.97); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(139,0,0,0.2); border-radius:12px; padding:16px; box-shadow:0 8px 32px rgba(61,43,31,0.12); max-height:320px; overflow-y:auto; max-width:320px; font-size:13px; pointer-events:none;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid rgba(139,0,0,0.12); padding-bottom:8px; position:sticky; top:0; background:rgba(255,248,240,0.97); z-index:1;">
+              <b style="color:#8B0000; font-size:15px;" id="festival-panel-title">标题</b>
+              <span id="festival-panel-close" style="cursor:pointer; font-size:18px; color:#8b7355; line-height:1;">&times;</span>
+            </div>
+            <div id="festival-panel-body"></div>
+          </div>
+        </div>
+        <p class="vert-body" style="text-align:center;max-width:950px;margin-top:-2vh;font-size:clamp(1.05rem,1.4vw,1.25rem);line-height:1.95;font-weight:500;">人们开始在彼此的节日里驻足：因为那达慕的骑射，萌生了去内蒙古的念头；因为古尔邦节的馕和羊肉，开始想象新疆的味道；因为三月三的长桌宴照片，<span style="white-space:nowrap;">第一次认真记住了"壮族"这两个字。</span></p>
+      </div>
+    </section>
+        <!-- ===== 4. 结尾 ===== -->
+    <section class="scene" id="scene-ending" data-chapter="ending">
+      <div class="scene-inner" style="flex-direction:column;align-items:center;justify-content:center;gap:2vh;padding:4vh 6vw;text-align:center;">
+        <div class="vert-step-label ending-line">尾声</div>
+        <h2 class="vert-step-title ending-line" style="font-size:clamp(2.4rem,3.8vw,3.4rem);">水，是最好的介质</h2>
+        <div class="vert-sep ending-line" style="margin:0.6vh auto;"></div>
+        <div style="max-width:700px;display:flex;flex-direction:column;gap:1.6vh;">
+          <p class="ending-line" style="font-family:'KaiTi','STKaiti','楷体',var(--font-title);font-size:clamp(1.2rem,1.5vw,1.4rem);color:var(--ink);line-height:2.1;">傣语里，泼水节叫"桑堪比迈"，意思是新年。但对于那些从成都、广州、北京赶来的人而言，它的意思更简单——<span style="color:var(--vermillion);font-weight:700;white-space:nowrap;">一个可以把水泼向陌生人、而对方只会大笑的地方。</span></p>
+          <p class="ending-line" style="font-family:var(--font-title);font-size:clamp(1.8rem,2.4vw,2.2rem);font-weight:900;color:var(--vermillion);text-align:center;"><span id="ending-counter">238</span>万人，在同一场水里相遇。</p>
+          <p class="ending-line" style="font-family:'KaiTi','STKaiti','楷体',var(--font-title);font-size:clamp(1.15rem,1.4vw,1.3rem);color:var(--ink);line-height:2;">他们来自不同的城市，说着不同的方言，带着不同的习惯。但他们都被泼湿了，<span style="white-space:nowrap;">都笑了。</span></p>
+          <p class="ending-line" style="font-family:var(--font-body);font-size:clamp(1rem,1.15vw,1.1rem);color:var(--ink-muted);line-height:1.95;text-align:left;padding:1.4rem 1.6rem;background:var(--glass-bg);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--glass-border);border-radius:10px;">数据能记录的，是人流的峰值、游客的结构、词云的分布。数据记录不了的，是那个被水枪打中之后的瞬间——<span style="color:var(--vermillion);font-weight:600;">某种边界消失了，某种共同的东西浮出了水面。</span></p>
+          <p class="ending-line" style="font-family:var(--font-title);font-size:clamp(1.5rem,2vw,1.8rem);font-weight:900;color:var(--vermillion);text-align:center;letter-spacing:0.05em;">这，大概就是"共同体"最朴素的样子。</p>
+        </div>
+        <div class="ending-line" style="margin-top:1.5vh;padding-top:1.2vh;border-top:1px solid rgba(139,115,85,0.15);width:100%;max-width:580px;">
+          <p style="font-size:0.85rem;color:var(--ink-muted);text-align:center;line-height:1.8;">数据来源：西双版纳州人民政府、西双版纳州文旅局、百度地图迁徙大数据、微博公开博文</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 5. 感谢观看 ===== -->
+    <section class="scene" id="scene-thanks" data-chapter="thanks">
+      <div class="scene-inner" style="flex-direction:column;align-items:center;justify-content:center;">
+        <h2 style="font-family:var(--font-title);font-size:clamp(3.5rem,6vw,5rem);font-weight:900;color:var(--vermillion);text-align:center;letter-spacing:0.1em;">感谢观看！</h2>
+      </div>
+    </section>
+
+  </div><!-- /#sections-wrapper -->
+</div><!-- /#scroll-container -->
+
+<!-- 底部指示器 -->
+<div id="chapter-indicator">
+  <span class="indicator-dot active" data-target="0"></span><span class="indicator-label">开篇</span>
+  <span class="indicator-dot" data-target="1"></span><span class="indicator-label">到场</span>
+  <span class="indicator-dot" data-target="2"></span><span class="indicator-label">谁来了</span>
+  <span class="indicator-dot" data-target="3"></span><span class="indicator-label">公共语言</span>
+  <span class="indicator-dot" data-target="4"></span><span class="indicator-label">全景地图</span>
+  <span class="indicator-dot" data-target="5"></span><span class="indicator-label">结尾</span>
+  <span class="indicator-dot" data-target="6"></span><span class="indicator-label">谢谢</span>
+  <span class="scroll-hint-banner" id="scroll-hint-banner"><span>滑动探索</span><span class="arrow">→</span></span>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ========== 数据中心 ========== */
+  const waterGrowthData = { years: ['2024', '2025', '2026'], values: [203.19, 222.63, 238.08], unit: '万人次' };
+  const nadamData = { years: ['2019', '2020', '2021', '2022', '2023', '2024'], values: [42, 28, 38, 51, 60, 71], unit: '万人次' };
+
+  var provinceCoords = {
+    '内蒙古': [111.70, 43.90], '云南': [102.70, 25.00], '广西': [108.30, 22.80],
+    '甘肃': [103.70, 36.00], '新疆': [84.90, 41.70], '海南': [109.70, 19.00],
+    '青海': [96.00, 35.70], '西藏': [91.10, 31.70], '贵州': [106.70, 26.60],
+    '四川': [104.00, 30.60], '湖南': [112.00, 28.20], '台湾': [121.00, 23.70],
+    '吉林': [125.30, 43.80], '黑龙江': [126.60, 47.80], '辽宁': [123.40, 41.80],
+    '宁夏': [106.20, 38.47], '湖北': [114.30, 30.60], '重庆': [106.50, 29.50],
+    '河南': [113.60, 33.80], '陕西': [108.90, 34.30], '广东': [113.20, 23.10]
+  };
+  var provKeys = Object.keys(provinceCoords);
+
+  function extractProvince(provStr) {
+    for (var i = 0; i < provKeys.length; i++) {
+      if (provStr.indexOf(provKeys[i]) !== -1) return provKeys[i];
+    }
+    return null;
+  }
+
+  var festivalRawData = [
+    ['蒙古族','那达慕','夏秋之交（公历七八月）','内蒙古'],
+    ['蒙古族','马奶节','农历八月下旬','内蒙古'],
+    ['蒙古族','祭敖包','农历五至七月','内蒙古'],
+    ['傣族','泼水节','公历4月13-15日','云南'],
+    ['傣族','关门节','傣历九月十五日（公历7月中旬）','云南'],
+    ['傣族','开门节','傣历十二月十五日（公历10月中旬）','云南'],
+    ['壮族','三月三歌会','农历三月初三','广西'],
+    ['壮族','过小年','农历正月三十','广西'],
+    ['壮族','陇端节','农历三月下旬至四月上旬','云南'],
+    ['壮族','陀螺节','农历除夕至正月十六','广西'],
+    ['壮族','花朝节','农历二月初二','广西'],
+    ['壮族','吃立节','农历正月三十','广西'],
+    ['壮族','蚂拐节','农历正月初一至二月初','广西'],
+    ['东乡族','开斋节','伊斯兰教历10月1日','甘肃'],
+    ['东乡族','古尔邦节','伊斯兰教历12月10日','甘肃'],
+    ['东乡族','圣纪节','伊斯兰教历3月12日','甘肃'],
+    ['布朗族','厚南节','农历三月清明节后7日','云南'],
+    ['怒族','仙女节','农历三月十五日至十七日','云南'],
+    ['怒族','祭谷神','农历十二月二十九日','云南'],
+    ['塔塔尔族','古尔邦节','伊斯兰教历12月10日','新疆'],
+    ['回族','开斋节','伊斯兰教历10月1日','宁夏'],
+    ['回族','古尔邦节','伊斯兰教历12月10日','宁夏'],
+    ['回族','圣纪节','伊斯兰教历3月12日','宁夏'],
+    ['满族','颁金节','农历十月十三日','辽宁'],
+    ['满族','灯节','正月十五','辽宁'],
+    ['满族','添仓节','正月二十五','辽宁'],
+    ['满族','虫王节','六月初六','辽宁'],
+    ['黎族','三月三','农历三月初三','海南'],
+    ['纳西族','三朵节','农历二月初八','云南'],
+    ['撒拉族','开斋节','伊斯兰教历10月1日','青海'],
+    ['撒拉族','古尔邦节','伊斯兰教历12月10日','青海'],
+    ['撒拉族','圣纪节','伊斯兰教历3月12日','青海'],
+    ['乌孜别克族','开斋节','伊斯兰教历10月1日','新疆'],
+    ['乌孜别克族','古尔邦节','伊斯兰教历12月10日','新疆'],
+    ['乌孜别克族','圣纪节','伊斯兰教历3月12日','新疆'],
+    ['独龙族','年节','农历腊月（公历1月10日左右）','云南'],
+    ['藏族','藏历元旦','藏历正月初一','西藏'],
+    ['藏族','藏历农家新年','藏历十二月初一','西藏'],
+    ['藏族','萨噶达瓦节','藏历四月十五日','西藏'],
+    ['藏族','雪顿节','公历8月18日左右','西藏'],
+    ['藏族','白来日追节','藏历十月十五日','西藏'],
+    ['藏族','望果节','藏历七月','西藏'],
+    ['藏族','转山会','农历四月初八','四川'],
+    ['藏族','采花节','农历五月初五','甘肃'],
+    ['藏族','女儿节','农历五月初四、初五','甘肃'],
+    ['侗族','侗年','农历十月至十一月（秋收后）','贵州'],
+    ['侗族','祭牛节','农历四月初八或六月初六','贵州'],
+    ['侗族','花炮节','正月初三（各地时间不同）','广西'],
+    ['傈僳族','刀杆节','农历二月初八','云南'],
+    ['俄罗斯族','圣诞节','公历1月7日','内蒙古'],
+    ['鄂伦春族','篝火节','公历6月18日','内蒙古'],
+    ['维吾尔族','开斋节','伊斯兰教历10月1日','新疆'],
+    ['维吾尔族','古尔邦节','伊斯兰教历12月10日','新疆'],
+    ['维吾尔族','诺鲁孜节','春分日（公历3月21日左右）','新疆'],
+    ['瑶族','盘王节','农历十月十六日','广西'],
+    ['瑶族','达努节','农历五月二十九日','广西'],
+    ['佤族','新米节','公历8月14日左右','云南'],
+    ['苗族','苗年','农历十月至十一月（秋收后）','贵州'],
+    ['苗族','姊妹节','农历三月十五至十七日','贵州'],
+    ['彝族','火把节','农历六月二十四日','云南'],
+    ['彝族','彝族年','农历十月（各地略有差异）','四川'],
+    ['白族','三月街','农历三月十五至二十一日','云南'],
+    ['白族','绕三灵','农历四月二十三至二十五日','云南'],
+    ['土家族','赶年','腊月二十九或二十八（比春节早一天）','湖南'],
+    ['土家族','社巴节','农历正月（部分在三月）','湖南'],
+    ['哈尼族','十月年','农历十月','云南'],
+    ['哈尼族','苦扎扎','农历六月二十四日前后','云南'],
+    ['哈萨克族','诺鲁孜节','公历3月21日（春分）','新疆'],
+    ['哈萨克族','开斋节','伊斯兰教历10月1日','新疆'],
+    ['高山族','丰年祭','农历七八月间','台湾'],
+    ['拉祜族','葫芦节','公历4月8日（或农历十月）','云南'],
+    ['拉祜族','新米节','农历八月十五','云南'],
+    ['水族','端节','水历十二月（农历八月至十月）','贵州'],
+    ['水族','卯节','水历九月（农历五月）','贵州'],
+    ['景颇族','目瑙纵歌节','农历正月十五日','云南'],
+    ['柯尔克孜族','诺劳孜','农历正月初一（公历3月前后）','新疆'],
+    ['土族','纳顿节','农历七月十二至九月十五','青海'],
+    ['土族','擂台会','农历二月初二','青海'],
+    ['达斡尔族','阿涅节','农历正月初一','内蒙古'],
+    ['达斡尔族','斡包节','农历五月十三','内蒙古'],
+    ['仫佬族','依饭节','农历十月（立冬前后）','广西'],
+    ['羌族','羌历年','农历十月初一','四川'],
+    ['羌族','祭山会','农历三月或五月','四川'],
+    ['毛南族','分龙节','农历夏至后的第一个辰日','广西'],
+    ['仡佬族','吃新节','农历六月或七月（稻谷初黄时）','贵州'],
+    ['仡佬族','仡佬年','农历三月初三','贵州'],
+    ['锡伯族','西迁节','农历四月十八日','新疆'],
+    ['锡伯族','抹黑节','农历正月十六','新疆'],
+    ['阿昌族','阿露窝罗节','公历3月19日','云南'],
+    ['普米族','吾昔节','农历腊月初六或初七','云南'],
+    ['普米族','转山会','农历七月十五','云南'],
+    ['朝鲜族','百种节','农历七月十五','吉林'],
+    ['朝鲜族','流头节','农历六月十五','吉林'],
+    ['京族','哈节','农历六月初十或八月初十','广西'],
+    ['塔吉克族','诺鲁孜节','春分日','新疆'],
+    ['塔吉克族','皮里克节','伊斯兰教历8月14-15日','新疆'],
+    ['门巴族','曲科节','藏历六月','西藏'],
+    ['门巴族','主巴大法会','藏历正月','西藏'],
+    ['珞巴族','旭独龙节','藏历二月','西藏'],
+    ['珞巴族','昂德林节','藏历八月','西藏'],
+    ['基诺族','特懋克节','公历2月6日','云南'],
+    ['德昂族','泼水节','公历4月13日左右','云南'],
+    ['德昂族','关门节、开门节','傣历九月十五、十二月十五','云南'],
+    ['赫哲族','乌日贡节','农历五月十五前后','黑龙江'],
+    ['鄂温克族','瑟宾节','公历6月18日','内蒙古'],
+    ['鄂温克族','米阔鲁节','农历五月二十二','内蒙古'],
+    ['布依族','六月六','农历六月初六','贵州'],
+    ['布依族','查白歌节','农历六月二十一','贵州'],
+    ['保安族','开斋节','伊斯兰教历10月1日','甘肃'],
+    ['保安族','古尔邦节','伊斯兰教历12月10日','甘肃'],
+    ['裕固族','剪马鬃节','农历四月十一日','甘肃'],
+    ['裕固族','正月大会','农历正月初十至十五','甘肃']
+  ];
+
+  function buildFestivalMarkers() {
+    var provMap = {};
+    festivalRawData.forEach(function(r) {
+      var nation = r[0], name = r[1], time = r[2], provStr = r[3];
+      var prov = extractProvince(provStr);
+      if (!prov) return;
+      if (!provMap[prov]) provMap[prov] = [];
+      provMap[prov].push({ nation: nation, name: name, time: time });
+    });
+    var markers = [];
+    Object.keys(provMap).forEach(function(prov) {
+      var coords = provinceCoords[prov];
+      if (!coords) return;
+      markers.push({ province: prov, lng: coords[0], lat: coords[1], festivals: provMap[prov] });
+    });
+    return markers;
+  }
+  var festivalMarkers = buildFestivalMarkers();
+
+  function isMobile() { return window.innerWidth <= 768; }
+
+  /* ========== 氛围层 ========== */
+  const envLayers = {
+    water: document.getElementById('env-water'),
+    grass: document.getElementById('env-grass'),
+    map: document.getElementById('env-map')
+  };
+
+  const chapterAtmMap = {
+    hero:     'water',
+    water:    'water',
+    'water-b': 'water',
+    nadam:    'grass',
+    map:      'map',
+    ending:   null,
+    thanks:   null
+  };
+
+  let currentAtm = 'water';
+
+  function switchAtmosphere(atmName) {
+    if (atmName === currentAtm) return;
+    Object.keys(envLayers).forEach(function(k) {
+      envLayers[k].style.opacity = (k === atmName) ? '1' : '0';
+    });
+    currentAtm = atmName;
+    updateTravelerStyle(atmName);
+  }
+
+  /* ========== 小人风格 ========== */
+  const travelerAura = document.querySelector('.traveler-aura');
+  function updateTravelerStyle(atmName) {
+    if (!travelerAura) return;
+    switch (atmName) {
+      case 'water': travelerAura.style.background = 'radial-gradient(ellipse, rgba(120,200,230,0.22) 0%, transparent 70%)'; break;
+      case 'grass': travelerAura.style.background = 'radial-gradient(ellipse, rgba(220,180,60,0.25) 0%, transparent 70%)'; break;
+      case 'map': travelerAura.style.background = 'radial-gradient(ellipse, rgba(200,160,80,0.2) 0%, transparent 70%)'; break;
+      default: travelerAura.style.background = 'radial-gradient(ellipse, rgba(255,230,180,0.2) 0%, transparent 70%)';
+    }
+  }
+
+  /* ========== 指示器 ========== */
+  const indicatorDots = document.querySelectorAll('.indicator-dot');
+  const chaptersOrder = ['hero', 'water', 'water-b', 'nadam', 'map', 'ending', 'thanks'];
+
+  function updateIndicator(chapter) {
+    var idx = chaptersOrder.indexOf(chapter);
+    indicatorDots.forEach(function(dot, i) {
+      dot.classList.remove('active', 'visited');
+      if (i === idx) dot.classList.add('active');
+      else if (i < idx) dot.classList.add('visited');
+    });
+  }
+
+  indicatorDots.forEach(function(dot) {
+    dot.addEventListener('click', function() {
+      var targetIdx = parseInt(dot.dataset.target, 10);
+      if (isNaN(targetIdx)) return;
+      var scrollX = targetIdx * window.innerWidth;
+      gsap.to(window, { scrollTo: { x: scrollX, autoKill: false }, duration: 1, ease: 'power2.inOut' });
+    });
+  });
+
+  /* ========== GSAP 横向滚动 ========== */
+  const sectionsWrapper = document.getElementById('sections-wrapper');
+  const sections = gsap.utils.toArray('.scene');
+  const sectionCount = sections.length;
+  const scrollTriggerEl = document.getElementById('scroll-trigger');
+  const scrollHintBanner = document.getElementById('scroll-hint-banner');
+
+  function setScrollTriggerHeight() {
+    scrollTriggerEl.style.height = ((sectionCount - 1 + 0.25) * window.innerWidth) + 'px';
+  }
+  setScrollTriggerHeight();
+
+  const horizontalTween = gsap.to(sectionsWrapper, {
+    x: function() { return '-' + ((sectionCount - 1 + 0.25) * window.innerWidth) + 'px'; },
+    ease: 'none'
+  });
+
+  let prevProgress = 0;
+
+  const mainST = ScrollTrigger.create({
+    trigger: '#scroll-trigger',
+    start: 'top top',
+    end: 'bottom bottom',
+    scrub: 1,
+    pin: '#scroll-container',
+    animation: horizontalTween,
+    anticipatePin: 1,
+    onUpdate: function(self) {
+      var progress = self.progress;
+      prevProgress = progress;
+
+      var chapterIdx = Math.min(Math.floor(progress * sectionCount + 0.15), sectionCount - 1);
+      var chapter = chaptersOrder[chapterIdx] || 'hero';
+
+      var targetAtm = chapterAtmMap[chapter];
+      if (targetAtm !== currentAtm) { switchAtmosphere(targetAtm); }
+      updateIndicator(chapter);
+
+      // 泼水节素材
+      if (chapterIdx === 1 || chapterIdx === 2) {
+        var comingFromLeft = waterExitedLeft;
+        enterWater(comingFromLeft);
+        if (chapterIdx === 1) animateTripleCols();
+        if (chapterIdx === 2) animateWaterBLines();
+      } else if (waterEntered) {
+        var goingLeft = chapterIdx > 2;
+        leaveWater(goingLeft);
+        resetTripleCols();
+        resetWaterBLines();
+      }
+
+      // 那达慕素材
+      if (chapterIdx === 3) {
+        var comeLeft = nadamExitedLeft;
+        enterNadam(comeLeft);
+      } else if (nadamEntered) {
+        var goLeft = chapterIdx > 3;
+        leaveNadam(goLeft);
+      }
+      if (chapterIdx === 5) { window.animateEnding(); }
+
+      if (progress > 0.05 && scrollHintBanner.style.opacity !== '0') {
+        gsap.to(scrollHintBanner, { opacity: 0, duration: 0.5 });
+      }
+    },
+    onRefresh: function() {
+      setScrollTriggerHeight();
+      horizontalTween.vars.x = '-' + ((sectionCount - 1 + 0.25) * window.innerWidth) + 'px';
+      horizontalTween.invalidate();
+    }
+  });
+
+  /* ========== 泼水节素材 ========== */
+  /* ========== 二文字逐行淡入 ========== */
+  var waterbLinesAnimated = false;
+  function animateWaterBLines() {
+    if (waterbLinesAnimated) return;
+    waterbLinesAnimated = true;
+    var lines = document.querySelectorAll('.waterb-line');
+    lines.forEach(function(line, i) {
+      gsap.fromTo(line, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.7, delay: i * 1.2, ease: 'power2.out' });
+    });
+  }
+  function resetWaterBLines() {
+    if (!waterbLinesAnimated) return;
+    waterbLinesAnimated = false;
+    gsap.set('.waterb-line', { opacity: 0, y: 0, clearProps: 'all' });
+  }
+
+  var waterEls = document.querySelectorAll('.water-prop');
+  gsap.set(waterEls, { x: '120vw', opacity: 0 });
+  var waterEntered = false, waterExitedLeft = false;
+
+  function enterWater(fromLeft) {
+    if (waterEntered) return;
+    waterEntered = true;
+    waterEls.forEach(function(el, i) {
+      if (fromLeft) gsap.set(el, { x: '-120vw', opacity: 1 });
+      else gsap.set(el, { x: '120vw', opacity: 1 });
+      el.classList.remove('shaking-out');
+      gsap.killTweensOf(el);
+      gsap.to(el, { x: 0, opacity: 1, duration: 2, delay: i * 0.25, ease: 'power2.out',
+        onComplete: function() { el.classList.add('shaking-' + (i + 1)); }
+      });
+    });
+  }
+  function leaveWater(toLeft) {
+    if (!waterEntered) return;
+    waterEntered = false; waterExitedLeft = toLeft;
+    var targetX = toLeft ? '-130vw' : '120vw';
+    waterEls.forEach(function(el, i) {
+      el.classList.remove('shaking-' + (i + 1)); el.classList.add('shaking-out');
+      gsap.killTweensOf(el);
+      gsap.to(el, { x: targetX, opacity: 0.15, duration: 3.5, delay: i * 0.35, ease: 'power3.out' });
+      gsap.to(el, { opacity: 0, duration: 0.3, delay: 3.5 + i * 0.35 });
+    });
+  }
+
+  /* ========== 那达慕素材 ========== */
+  var nadamEls = document.querySelectorAll('.nadam-prop');
+  gsap.set(nadamEls, { x: '120vw', opacity: 0 });
+  var nadamEntered = false, nadamExitedLeft = false;
+
+  function enterNadam(fromLeft) {
+    if (nadamEntered) return;
+    nadamEntered = true;
+    nadamEls.forEach(function(el, i) {
+      if (fromLeft) gsap.set(el, { x: '-120vw', opacity: 1 });
+      else gsap.set(el, { x: '120vw', opacity: 1 });
+      gsap.killTweensOf(el);
+      gsap.to(el, { x: 0, opacity: 1, duration: 2, delay: i * 0.25, ease: 'power2.out',
+        onComplete: function() { el.classList.add('shaking-' + (i + 1)); }
+      });
+    });
+  }
+  function leaveNadam(toLeft) {
+    if (!nadamEntered) return;
+    nadamEntered = false; nadamExitedLeft = toLeft;
+    var targetX = toLeft ? '-130vw' : '120vw';
+    nadamEls.forEach(function(el, i) {
+      el.classList.remove('shaking-' + (i + 1));
+      gsap.killTweensOf(el);
+      gsap.to(el, { x: targetX, opacity: 0.15, duration: 3.5, delay: i * 0.35, ease: 'power3.out' });
+      gsap.to(el, { opacity: 0, duration: 0.3, delay: 3.5 + i * 0.35 });
+    });
+  }
+
+  /* ========== 三栏逐列淡入 ========== */
+  var tripleColsAnimated = false;
+  function animateTripleCols() {
+    if (tripleColsAnimated) return;
+    tripleColsAnimated = true;
+    var cols = document.querySelectorAll('.vert-triple-col');
+    var intro = document.querySelector('.vert-intro-side');
+    cols.forEach(function(col, i) {
+      gsap.fromTo(col, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, delay: i * 2, ease: 'power2.out' });
+    });
+    if (intro) { gsap.to(intro, { opacity: 0.75, duration: 1.2, delay: 4.5, ease: 'power2.out' }); }
+  }
+  function resetTripleCols() {
+    if (!tripleColsAnimated) return;
+    tripleColsAnimated = false;
+    var cols = document.querySelectorAll('.vert-triple-col');
+    gsap.set(cols, { opacity: 0, y: 0, clearProps: 'all' });
+    var intro = document.querySelector('.vert-intro-side');
+    if (intro) gsap.set(intro, { opacity: 0, clearProps: 'all' });
+  }
+
+  /* ========== ECharts ========== */
+  const chartInstances = {};
+  function createChart(domId) {
+    var dom = document.getElementById(domId);
+    if (!dom) return null;
+    if (chartInstances[domId]) chartInstances[domId].dispose();
+    var chart = echarts.init(dom);
+    chartInstances[domId] = chart;
+    return chart;
+  }
+
+  function initWaterGrowthChart() {
+    var chart = createChart('chart-water-growth');
+    if (!chart) return;
+    chart.setOption({
+      backgroundColor: 'transparent',
+      tooltip: { trigger: 'axis', backgroundColor: 'rgba(255,248,240,0.95)', borderColor: 'rgba(139,0,0,0.2)', textStyle: { color: '#3d2b1f', fontSize: 13 }, formatter: function(p) { return p[0].name + '年<br/><b>' + p[0].value + '</b> 万人次'; } },
+      grid: { left: '10%', right: '10%', top: '10%', bottom: '10%' },
+      xAxis: { type: 'category', data: waterGrowthData.years, axisLine: { lineStyle: { color: 'rgba(139,115,85,0.35)' } }, axisLabel: { color: '#5c3d2e', fontSize: 13, fontWeight: 'bold' }, axisTick: { show: false } },
+      yAxis: { type: 'value', name: waterGrowthData.unit, min: 180, nameTextStyle: { color: '#8b7355', fontSize: 11 }, axisLabel: { color: '#8b7355', fontSize: 11 }, splitLine: { lineStyle: { color: 'rgba(139,115,85,0.08)' } }, axisLine: { show: false } },
+      series: [{ type: 'bar', data: waterGrowthData.values.map(function(v, i) { return { value: v, itemStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1, [{ offset:0, color: i === 2 ? '#8B0000' : '#a52a2a' }, { offset:1, color: i === 2 ? '#c23a3a' : '#c27a5a' }]), borderRadius: [8,8,0,0] } }; }), barWidth: '40%', label: { show: true, position: 'top', color: '#5c3d2e', fontSize: 13, fontWeight: 'bold', formatter: '{c}' }, emphasis: { itemStyle: { color: '#b8860b' } } }]
+    });
+  }
+
+  let mapLoaded = false, mapChart = null;
+  function initMapChart() {
+    mapChart = createChart('chart-map');
+    if (!mapChart) return;
+    mapChart.showLoading({ text: '地图加载中...', color: '#8B0000', textColor: '#8b7355', maskColor: 'rgba(245,240,232,0.85)' });
+    fetch('https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json')
+      .then(function(res) { if (!res.ok) throw new Error('加载失败'); return res.json(); })
+      .then(function(geo) { echarts.registerMap('china', geo); mapLoaded = true; mapChart.hideLoading(); renderMapChart(); })
+      .catch(function(err) { mapChart.hideLoading(); mapChart.setOption({ title: { text: '地图数据加载失败\n请检查网络连接后刷新', left: 'center', top: 'center', textStyle: { color: '#8b7355', fontSize: 14 } } }); });
+  }
+
+  function renderMapChart() {
+    if (!mapChart || !mapLoaded) return;
+    mapChart.setOption({
+      backgroundColor: 'transparent', tooltip: { trigger: 'item', triggerOn: 'none' },
+      geo: { map: 'china', roam: false, zoom: 1.5, center: [104.5, 37], silent: true, label: { show: false }, itemStyle: { areaColor: '#f0e8d8', borderColor: 'rgba(139,0,0,0.18)', borderWidth: 1.2 }, emphasis: { label: { show: false }, itemStyle: { areaColor: '#e8d8c0', borderColor: '#8B0000', borderWidth: 1.5 } } },
+      series: [{ type: 'effectScatter', coordinateSystem: 'geo', data: festivalMarkers.map(function(m) { var count = m.festivals.length; var size = Math.min(6 + count * 2.2, 42); return { name: m.province, value: [m.lng, m.lat], festivals: m.festivals, symbolSize: size }; }), symbolSize: 14, showEffectOn: 'render', rippleEffect: { brushType: 'stroke', scale: 3, period: 6, color: '#b8860b' }, label: { show: true, formatter: '{b}', position: 'right', color: '#8B0000', fontSize: isMobile() ? 12 : 16, distance: 8, fontWeight: 'bold' }, itemStyle: { color: '#b8860b', shadowBlur: 10, shadowColor: 'rgba(184,134,11,0.5)' }, zlevel: 1 }]
+    });
+
+    var panel = document.getElementById('festival-panel');
+    var panelTitle = document.getElementById('festival-panel-title');
+    var panelBody = document.getElementById('festival-panel-body');
+    var closeBtn = document.getElementById('festival-panel-close');
+    var chartDom = document.getElementById('chart-map');
+
+    function hidePanel() { panel.style.opacity = '0'; panel.style.transform = 'translateY(8px) scale(0.96)'; panel.style.pointerEvents = 'none'; }
+    closeBtn.onclick = function(e) { e.stopPropagation(); hidePanel(); };
+    document.addEventListener('click', function(e) { if (panel.style.opacity === '1' && !panel.contains(e.target) && e.target !== chartDom && !chartDom.contains(e.target)) { hidePanel(); } });
+
+    mapChart.off('click');
+    mapChart.on('click', function(params) {
+      if (params.componentType === 'series' && params.data && params.data.festivals) {
+        var data = params.data; var count = data.festivals.length;
+        panel.style.opacity = '0'; panel.style.transform = 'translateY(6px) scale(0.97)';
+        setTimeout(function() {
+          panelTitle.textContent = data.name + '（' + count + '个节庆）';
+          var html = '';
+          data.festivals.forEach(function(f) { html += '<div style="margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid rgba(139,115,85,0.08);line-height:1.6;">'; html += '<span style="color:#8B0000;font-weight:500;">' + f.name + '</span>'; html += ' <span style="font-size:11px;color:#8b7355;">（' + f.nation + '）</span>'; html += '<br/><span style="font-size:10px;color:#8b7355;">' + f.time + '</span>'; html += '</div>'; });
+          panelBody.innerHTML = html;
+          var isWest = data.value[0] < 104.5; var chartRect = chartDom.getBoundingClientRect(); var panelW = 320;
+          var clickX = params.event ? params.event.offsetX : chartRect.width / 2;
+          var clickY = params.event ? params.event.offsetY : chartRect.height / 2;
+          var top = Math.max(10, Math.min(clickY - 60, chartRect.height - 340));
+          var left = isWest ? clickX - panelW - 18 : clickX + 18;
+          if (left < 6) left = clickX + 18;
+          if (left + panelW > chartRect.width - 6) left = clickX - panelW - 18;
+          panel.style.left = left + 'px'; panel.style.top = top + 'px';
+          panel.style.opacity = '1'; panel.style.transform = 'translateY(0) scale(1)'; panel.style.pointerEvents = 'auto';
+        }, 180);
+      } else { hidePanel(); }
+    });
+  }
+
+  function initAllCharts() { initWaterGrowthChart(); initMapChart(); }
+
+  function resizeAllCharts() {
+    Object.values(chartInstances).forEach(function(c) { if (c && !c.isDisposed()) { c.resize(); if (c === mapChart && mapLoaded) renderMapChart(); } });
+  }
+
+  /* ========== 磁力粒子 ========== */
+  (function() {
+    var P = document.getElementById('particle-canvas'), C = P.getContext('2d');
+    var W, H, particles = [], COUNT = 290, MAGNET = 110, STRENGTH = 3, LERP = 0.06;
+    var COLOR = '#6ca0f5', DEPTH = 1.8, WAVE_AMP = 0.8, WAVE_SPEED = 0.1, VARIANCE = 0.9;
+    var mouseX = -9999, mouseY = -9999, hasMouse = false, time = 0;
+    function resize() { W = P.width = window.innerWidth; H = P.height = window.innerHeight; }
+    function initParticles() {
+      particles = [];
+      var cols = Math.ceil(Math.sqrt(COUNT * (W / H))), rows = Math.ceil(COUNT / cols);
+      var cellW = W / cols, cellH = H / rows;
+      for (var i = 0; i < COUNT; i++) {
+        var col = i % cols, row = Math.floor(i / cols);
+        var ox = (col + 0.5) * cellW + (Math.random() - 0.5) * cellW * VARIANCE;
+        var oy = (row + 0.5) * cellH + (Math.random() - 0.5) * cellH * VARIANCE;
+        var z = Math.random();
+        particles.push({ x: ox, y: oy, ox: ox, oy: oy, z: z });
+      }
+    }
+    P.addEventListener('mousemove', function(e) { mouseX = e.clientX; mouseY = e.clientY; hasMouse = true; });
+    P.addEventListener('mouseleave', function() { hasMouse = false; });
+    P.addEventListener('touchmove', function(e) { if (e.touches.length) { mouseX = e.touches[0].clientX; mouseY = e.touches[0].clientY; hasMouse = true; } }, {passive: true});
+    P.addEventListener('touchend', function() { hasMouse = false; });
+    function draw() {
+      time += 0.016; C.clearRect(0, 0, W, H);
+      for (var i = 0; i < particles.length; i++) {
+        var p = particles[i], tx = p.ox, ty = p.oy;
+        var waveX = Math.sin(time * WAVE_SPEED + p.oy * 0.01 + p.z * 2) * WAVE_AMP;
+        var waveY = Math.cos(time * WAVE_SPEED + p.ox * 0.01 + p.z * 2) * WAVE_AMP;
+        tx += waveX; ty += waveY;
+        if (hasMouse) { var dx = p.x - mouseX, dy = p.y - mouseY, dist = Math.sqrt(dx * dx + dy * dy); if (dist < MAGNET && dist > 0.01) { var force = STRENGTH * (1 - dist / MAGNET); tx += (mouseX - p.x) * force; ty += (mouseY - p.y) * force; } }
+        p.x += (tx - p.x) * LERP; p.y += (ty - p.y) * LERP;
+        var s = 1 * (0.4 + p.z * DEPTH * 0.6), alpha = 0.3 + p.z * 0.7;
+        var grad = C.createRadialGradient(p.x - s*0.3, p.y - s*0.3, s*0.1, p.x, p.y, s);
+        grad.addColorStop(0, COLOR); grad.addColorStop(0.5, COLOR); grad.addColorStop(1, 'rgba(108,160,245,0)');
+        C.beginPath(); C.arc(p.x, p.y, s, 0, Math.PI*2); C.fillStyle = grad; C.globalAlpha = alpha; C.fill();
+      }
+      C.globalAlpha = 1; requestAnimationFrame(draw);
+    }
+    resize(); initParticles(); draw();
+    window.addEventListener('resize', function() { resize(); initParticles(); });
+  })();
+
+  /* ========== resize ========== */
+  let resizeTimeout;
+  window.addEventListener('resize', function() { clearTimeout(resizeTimeout); resizeTimeout = setTimeout(function() { ScrollTrigger.refresh(); resizeAllCharts(); }, 250); });
+
+  /* ========== 启动 ========== */
+  
+  /* ========== 图表点击切换 ========== */
+  
+
+    /* ========== 二：全屏图表 ========== */
+  window.openWaterBChart = function(type) {
+    document.getElementById('waterb-btns').style.display = 'none';
+    document.getElementById('waterb-overlay').style.display = 'block';
+    document.getElementById('waterb-' + type + '-chart').style.display = 'block';
+  };
+  window.closeWaterBChart = function() {
+    document.getElementById('waterb-btns').style.display = 'flex';
+    document.getElementById('waterb-overlay').style.display = 'none';
+    document.getElementById('waterb-gender-chart').style.display = 'none';
+    document.getElementById('waterb-age-chart').style.display = 'none';
+  };
+
+  /* ========== 三：节庆切换 ========== */
+  /* ========== 结尾逐行 + 238万计数 ========== */
+  window.endingAnimated = false;
+  window.animateEnding = function() {
+    if (window.endingAnimated) return;
+    window.endingAnimated = true;
+    var lines = document.querySelectorAll('.ending-line');
+    lines.forEach(function(line, i) {
+      gsap.fromTo(line, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.7, delay: i * 0.85, ease: 'power2.out' });
+    });
+    // Counter: 238
+    var counter = document.getElementById('ending-counter');
+    if (counter) {
+      var start = 1, target = 238, dur = 2000, startTime = null;
+      function tick(ts) {
+        if (!startTime) startTime = ts;
+        var p = Math.min((ts - startTime) / dur, 1);
+        counter.textContent = Math.round(start + (target - start) * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) requestAnimationFrame(tick); else counter.textContent = target;
+      }
+      setTimeout(function() { requestAnimationFrame(tick); }, 2600);
+    }
+  };
+  window.resetEnding = function() {
+    if (!window.endingAnimated) return;
+    window.endingAnimated = false;
+    gsap.set('.ending-line', { opacity: 0, y: 0, clearProps: 'all' });
+    var c = document.getElementById('ending-counter');
+    if (c) c.textContent = '238';
+  };
+
+  window.switchFestTab = function(fest) {
+    document.querySelectorAll('.fest-card').forEach(function(c) { c.style.display = 'none'; });
+    document.querySelectorAll('.fest-tab-btn').forEach(function(b) { b.classList.remove('fest-tab-active'); });
+    var card = document.getElementById('fest-card-' + fest);
+    if (card) card.style.display = 'flex';
+    var btn = document.getElementById('fest-tab-' + fest);
+    if (btn) btn.classList.add('fest-tab-active');
+  };
+
+  function boot() {
+    initAllCharts();
+    updateIndicator('hero');
+    updateTravelerStyle('water');
+    var heroVideo = document.getElementById('hero-title-video');
+    if (heroVideo) { heroVideo.playbackRate = 0.65; }
+  }
+
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', boot); }
+  else { boot(); }
+})();
+</script>
+
+
+
+
+<!-- 弹窗图表层 -->
+<div id="waterb-overlay" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;background:rgba(0,0,0,0.45);justify-content:center;align-items:center;" onclick="if(event.target===this){this.style.display='none';document.getElementById('waterb-btns').style.display='flex';document.getElementById('waterb-gender-chart').style.display='none';document.getElementById('waterb-age-chart').style.display='none'}">
+  <div style="position:relative;width:560px;max-width:92vw;height:560px;max-height:88vh;background:#f5f0e8;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.3);overflow:auto;">
+    <button onclick="document.getElementById('waterb-overlay').style.display='none';document.getElementById('waterb-btns').style.display='flex';document.getElementById('waterb-gender-chart').style.display='none';document.getElementById('waterb-age-chart').style.display='none'" style="position:sticky;float:right;top:8px;left:calc(100% - 44px);z-index:10;font-size:1.4rem;background:rgba(255,255,255,0.85);border:1px solid #ddd;border-radius:50%;width:30px;height:30px;cursor:pointer;color:#3d2b1f;line-height:30px;text-align:center;margin:8px 8px 0 0;">&times;</button>
+    <div id="waterb-gender-chart" style="display:none;">
+      <iframe src="https://dycharts.com/xshow/index.html?id=c_fff251aef4e54eefd2288625b47eb41a" scrolling="no" frameborder="0" style="width:560px;height:540px;border:none;display:block;margin:0 auto;"></iframe>
+    </div>
+    <div id="waterb-age-chart" style="display:none;">
+      <iframe src="https://dycharts.com/xshow/index.html?id=c_8bf24e130f4c986369e2d71d75242bbc" scrolling="no" frameborder="0" style="width:560px;height:540px;border:none;display:block;margin:0 auto;"></iframe>
+    </div>
+  </div>
+</div>
+</body>
+</html>
