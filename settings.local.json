@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Select-String -Path \"E:\\\\360MoveData\\\\Users\\\\ASUS\\\\Desktop\\\\数据新闻期末\\\\index.html\" -Pattern \"hero-dek|hero-intro\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line\\)\" })",
+      "PowerShell(Get-Content \"E:\\\\360MoveData\\\\Users\\\\ASUS\\\\Desktop\\\\数据新闻期末\\\\index.html\" -Encoding utf8 | Select-Object -Skip 697 -First 25 | ForEach-Object { $_ -replace \"`t\", \"[TAB]\" })",
+      "PowerShell(Get-Content \"E:\\\\360MoveData\\\\Users\\\\ASUS\\\\Desktop\\\\数据新闻期末\\\\index.html\" -Encoding utf8 | Select-Object -Skip 728 -First 14 | ForEach-Object { $_ -replace \"`t\", \"[TAB]\" })",
+      "PowerShell(Select-String -Path \"E:\\\\360MoveData\\\\Users\\\\ASUS\\\\Desktop\\\\数据新闻期末\\\\index.html\" -Pattern \"hero-dek \\\\{\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell($f = Get-Item \"E:\\\\360MoveData\\\\Users\\\\ASUS\\\\Desktop\\\\数据新闻期末\\\\标题_transparent.webm\"; \"Size: $\\($f.Length\\) bytes\"; \"LastModified: $\\($f.LastWriteTime\\)\")",
+      "PowerShell($content = Get-Content \"E:\\\\360MoveData\\\\Users\\\\ASUS\\\\Desktop\\\\数据新闻期末\\\\index.html\" -Encoding utf8 -Raw; $idx = $content.IndexOf\\('<!-- ===== 0. Hero'\\); $sub = $content.Substring\\($idx, 600\\); $sub -replace \"`t\", \"[TAB]\" -replace \"`n\", \"`n\")",
+      "PowerShell($content = Get-Content \"E:\\\\360MoveData\\\\Users\\\\ASUS\\\\Desktop\\\\数据新闻期末\\\\index.html\" -Encoding utf8 -Raw; $idx = $content.IndexOf\\('hero-text-col'\\); $sub = $content.Substring\\($idx, 300\\); $bytes = [System.Text.Encoding]::UTF8.GetBytes\\($sub\\); for \\($i=0; $i -lt [Math]::Min\\(300, $bytes.Length\\); $i++\\) { $b = $bytes[$i]; if \\($b -eq 9\\) { Write-Host -NoNewline \"[TAB]\" } elseif \\($b -eq 10\\) { Write-Host \"[LF]`n\" } elseif \\($b -eq 13\\) { Write-Host -NoNewline \"[CR]\" } else { Write-Host -NoNewline \\([char]$b\\) } })",
+      "PowerShell(Select-String -Path \"E:\\\\360MoveData\\\\Users\\\\ASUS\\\\Desktop\\\\数据新闻期末\\\\index.html\" -Pattern \"chapter-indicator|chaptersOrder|chapterIdx === 1|chapterIdx === 3|water-b|data-target\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"E:\\\\360MoveData\\\\Users\\\\ASUS\\\\Desktop\\\\数据新闻期末\\\\index.html\" -Pattern \"chaptersOrder\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"E:\\\\360MoveData\\\\Users\\\\ASUS\\\\Desktop\\\\数据新闻期末\\\\index.html\" -Pattern \"data-target\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"E:\\\\360MoveData\\\\Users\\\\ASUS\\\\Desktop\\\\数据新闻期末\\\\index.html\" -Pattern \"vert-intro-side\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"E:\\\\360MoveData\\\\Users\\\\ASUS\\\\Desktop\\\\数据新闻期末\\\\index.html\" -Pattern \"\\\\.vert-triple-footer\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"E:\\\\360MoveData\\\\Users\\\\ASUS\\\\Desktop\\\\数据新闻期末\\\\index.html\" -Pattern \"toggle-chart-body\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"E:\\\\360MoveData\\\\Users\\\\ASUS\\\\Desktop\\\\数据新闻期末\\\\index.html\" -Pattern \"toggle-chart\" -Context 0,2 | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)`n  $\\($_.Context.PostContext -join \"`n  \"\\)\" })",
+      "PowerShell(Select-String -Path \"E:\\\\360MoveData\\\\Users\\\\ASUS\\\\Desktop\\\\数据新闻期末\\\\index.html\" -Pattern \"toggle-chart-body\" -Context 0,1 | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)`n  $\\($_.Context.PostContext\\)\" })",
+      "PowerShell(Select-String -Path \"E:\\\\360MoveData\\\\Users\\\\ASUS\\\\Desktop\\\\数据新闻期末\\\\index.html\" -Pattern \"openWaterBChart|closeWaterBChart\" | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
+      "PowerShell(Select-String -Path \"E:\\\\360MoveData\\\\Users\\\\ASUS\\\\Desktop\\\\数据新闻期末\\\\index.html\" -Pattern \"initAllCharts|switchFestTab|initWaterGrowth|initMap\" -SimpleMatch | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\).Substring\\(0, [Math]::Min\\(80, $_.Line.Length\\)\\)\\)\" })",
+      "PowerShell(Select-String -Path \"E:\\\\360MoveData\\\\Users\\\\ASUS\\\\Desktop\\\\数据新闻期末\\\\index.html\" -Pattern \"vert-step-label|不只是泼水节\" -SimpleMatch | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })"
+    ]
+  }
+}
