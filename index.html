@@ -1877,7 +1877,7 @@ body {
     mapChart = createChart('chart-map');
     if (!mapChart) return;
     mapChart.showLoading({ text: '地图加载中...', color: '#8B0000', textColor: '#8b7355', maskColor: 'rgba(245,240,232,0.85)' });
-    fetch('https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json')
+    fetch('./map_data.json')
       .then(function(res) { if (!res.ok) throw new Error('加载失败'); return res.json(); })
       .then(function(geo) { echarts.registerMap('china', geo); mapLoaded = true; mapChart.hideLoading(); renderMapChart(); })
       .catch(function(err) { mapChart.hideLoading(); mapChart.setOption({ title: { text: '地图数据加载失败\n请检查网络连接后刷新', left: 'center', top: 'center', textStyle: { color: '#8b7355', fontSize: 14 } } }); });
